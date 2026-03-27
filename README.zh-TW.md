@@ -1,10 +1,20 @@
-# Grafmaid
+<p>
+  <img src="src/img/logo.svg" alt="Grafmaid Logo" width="120" />
+</p>
 
-> **Gra**fana + Mer**maid**.js = **Grafmaid**
+<h1>Grafmaid</h1>
 
-一個 Grafana 面板外掛程式，透過 [Mermaid.js](https://mermaid.js.org/) 渲染圖表，並將查詢結果的即時指標數值注入圖表中，讓靜態架構圖轉變為動態的資料驅動視覺化呈現。
+<p>
+  <strong>Gra</strong>fana + Mer<strong>maid</strong>.js = <strong>Grafmaid</strong>
+</p>
 
-🌐 [English](README.md)
+<p>
+  一個 Grafana 面板外掛程式，透過 <a href="https://mermaid.js.org/">Mermaid.js</a> 渲染圖表，並將查詢結果的即時指標數值注入圖表中，讓靜態架構圖轉變為動態的資料驅動視覺化呈現。
+</p>
+
+<p>
+  🌐 <a href="README.md">English</a>
+</p>
 
 ## 功能特色
 
