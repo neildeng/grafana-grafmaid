@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/neildeng/neildengg-grafmaid-panel/main/src/img/logo.svg" alt="Grafmaid Logo" width="120" />
+  <img src="https://raw.githubusercontent.com/neildeng/grafana-grafmaid/main/src/img/logo.svg" alt="Grafmaid Logo" width="120" />
 </p>
 
 <h1 align="center">Grafmaid</h1>
