@@ -1,14 +1,14 @@
-<p align="center">
+<p>
   <img src="https://raw.githubusercontent.com/neildeng/grafana-grafmaid/main/src/img/logo.svg" alt="Grafmaid Logo" width="120" />
 </p>
 
-<h1 align="center">Grafmaid</h1>
+<h1>Grafmaid</h1>
 
-<p align="center">
+<p>
   <strong>Gra</strong>fana + Mer<strong>maid</strong>.js = <strong>Grafmaid</strong>
 </p>
 
-<p align="center">
+<p>
   A Grafana panel plugin that renders <a href="https://mermaid.js.org/">Mermaid.js</a> diagrams with live metric values injected from queries — turning static architecture diagrams into dynamic, data-driven visuals.
 </p>
 
