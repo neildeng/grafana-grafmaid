@@ -2,7 +2,12 @@
 // generally used by snapshots, but can affect specific tests
 process.env.TZ = 'UTC';
 
+const baseConfig = require('./.config/jest.config');
+
 module.exports = {
-  // Jest configuration provided by Grafana scaffolding
-  ...require('./.config/jest.config'),
+    ...baseConfig,
+    testMatch: [
+        ...(baseConfig.testMatch || []),
+        '<rootDir>/tests/unit/**/*.{spec,test,jest}.{js,jsx,ts,tsx}',
+    ],
 };
