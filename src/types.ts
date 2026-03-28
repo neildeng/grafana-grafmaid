@@ -1,7 +1,4 @@
-type SeriesSize = 'sm' | 'md' | 'lg';
-
-export interface SimpleOptions {
-  text: string;
-  showSeriesCount: boolean;
-  seriesCountSize: SeriesSize;
+export interface GrafmaidOptions {
+    // Mermaid 圖表定義
+    content: string;
 }
