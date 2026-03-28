@@ -1,40 +1,24 @@
 import { PanelPlugin } from '@grafana/data';
-import { SimpleOptions } from './types';
-import { SimplePanel } from './components/SimplePanel';
+import { GrafmaidOptions } from './types';
+import { GrafmaidPanel } from './components/GrafmaidPanel';
 
-export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions((builder) => {
-  return builder
-    .addTextInput({
-      path: 'text',
-      name: 'Simple text option',
-      description: 'Description of panel option',
-      defaultValue: 'Default value of text input option',
-    })
-    .addBooleanSwitch({
-      path: 'showSeriesCount',
-      name: 'Show series counter',
-      defaultValue: false,
-    })
-    .addRadio({
-      path: 'seriesCountSize',
-      defaultValue: 'sm',
-      name: 'Series counter size',
-      settings: {
-        options: [
-          {
-            value: 'sm',
-            label: 'Small',
-          },
-          {
-            value: 'md',
-            label: 'Medium',
-          },
-          {
-            value: 'lg',
-            label: 'Large',
-          },
-        ],
-      },
-      showIf: (config) => config.showSeriesCount,
-    });
+const DEFAULT_CONTENT = `graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]`;
+
+export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel).setPanelOptions((builder) => {
+    return builder
+        .addTextInput({
+            path: 'content',
+            name: 'Mermaid Content',
+            description: '輸入 Mermaid 圖表定義語法',
+            defaultValue: DEFAULT_CONTENT,
+            settings: {
+                useTextarea: true,
+                rows: 10,
+            },
+        });
 });

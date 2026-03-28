@@ -4,10 +4,10 @@
   "name": "Grafmaid",
   "id": "neildengg-grafmaid-panel",
   "info": {
-    "keywords": ["panel"],
+    "keywords": ["Grafmaid", "mermaidjs", "diagram", "flowchart"],
     "description": "",
     "author": {
-      "name": "Neildengg"
+      "name": "Neil Deng"
     },
     "logos": {
       "small": "img/logo.svg",
