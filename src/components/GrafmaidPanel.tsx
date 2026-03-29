@@ -4,7 +4,8 @@ import { GrafmaidOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import { Alert, useStyles2, useTheme2 } from '@grafana/ui';
 import mermaid from 'mermaid';
-import { expandEachBlocks, mermaidSafeFormat, detectUnresolvedVariables } from '../utils/mermaidVariables';
+import { expandEachBlocks, mermaidSafeFormat, detectUnresolvedVariables } from 'utils/mermaidVariables';
+import { expandDataBlocks } from 'utils/dataFrameExpander';
 
 interface Props extends PanelProps<GrafmaidOptions> {}
 
@@ -42,9 +43,16 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
         });
     }, [theme.isDark]);
 
+    // 0. 展開 {{#each data}} 區塊 (Data Frame 查詢結果展開)
+    const dataExpandedContent = expandDataBlocks(
+        options.content ?? '',
+        data.series,
+        options.escapeSpecialChars
+    );
+
     // 1. 展開 {{#each}} 區塊 (多選變數展開)
     const expandedContent = expandEachBlocks(
-        options.content ?? '',
+        dataExpandedContent,
         replaceVariables,
         options.escapeSpecialChars
     );
@@ -109,7 +117,7 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
         >
             {unresolvedVars.length > 0 && (
                 <Alert title="Unresolved variables" severity="warning">
-                    以下變數未在 Dashboard 中定義：{unresolvedVars.map((v) => `$${v}`).join(', ')}
+                    以下變數未在 Dashboard 中定義：{unresolvedVars.map((v: string) => `$${v}`).join(', ')}
                 </Alert>
             )}
             {error && (
