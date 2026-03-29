@@ -3,7 +3,6 @@ import { PanelProps } from '@grafana/data';
 import { GrafmaidOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import { Alert, useStyles2, useTheme2 } from '@grafana/ui';
-import DOMPurify from 'dompurify';
 import mermaid from 'mermaid';
 import { expandEachBlocks, mermaidSafeFormat, detectUnresolvedVariables } from 'utils/mermaidVariables';
 import { expandDataBlocks } from 'utils/dataFrameExpander';
@@ -84,14 +83,12 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                 await mermaid.parse(resolvedContent);
 
                 const { svg } = await mermaid.render(mermaidId, resolvedContent);
-                // Defense-in-depth：即使 Mermaid strict mode 已消毒，
-                // 仍以 DOMPurify 二次過濾 SVG，防止 Mermaid 函式庫未來的迴歸漏洞
-                // Defense-in-depth：封鎖 XSS 攻擊向量 (script/iframe/event handler)，
-                // 同時保留 Mermaid SVG 的完整結構 (foreignObject、style、HTML 文字等)
-                containerRef.current.innerHTML = DOMPurify.sanitize(svg, {
-                    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'button'],
-                    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'onchange'],
-                });
+                // 安全性由 mermaid.initialize({ securityLevel: 'strict' }) 保證：
+                // Mermaid strict mode 內部使用 DOMPurify 消毒 SVG 輸出，
+                // 移除 script / event handler / javascript: URL 等 XSS 向量。
+                // 不另加外部 DOMPurify 層，避免重複消毒破壞 SVG 結構
+                // (foreignObject 內嵌 HTML、style 元素等會被誤刪)。
+                containerRef.current.innerHTML = svg;
                 setError(null);
 
                 // 將 SVG 改為響應式，讓圖表隨面板大小自動縮放
