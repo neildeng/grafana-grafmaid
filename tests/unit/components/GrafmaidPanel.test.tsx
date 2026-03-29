@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { FieldConfigSource, LoadingState, PanelProps } from '@grafana/data';
+import { FieldConfigSource, FieldType, LoadingState, PanelProps } from '@grafana/data';
 import { GrafmaidOptions } from 'types';
 import { GrafmaidPanel } from '../../../src/components/GrafmaidPanel';
 import mermaid from 'mermaid';
@@ -234,6 +234,66 @@ describe('GrafmaidPanel', () => {
         });
 
         expect(screen.queryByText('Unresolved variables')).not.toBeInTheDocument();
+    });
+
+    it('含 data.series 時應以查詢結果展開 {{#each data}} 區塊', async () => {
+        mockedMermaid.render.mockResolvedValue({ svg: '<svg></svg>', bindFunctions: jest.fn() });
+
+        const props = createDefaultProps({
+            data: {
+                state: LoadingState.Done,
+                series: [
+                    {
+                        fields: [
+                            { name: 'Name', type: FieldType.string, values: ['DB', 'Cache'], config: {} },
+                            { name: 'CPU', type: FieldType.number, values: [75, 90], config: {} },
+                        ],
+                        length: 2,
+                    } as any,
+                ],
+                timeRange: {
+                    from: new Date('2024-01-01T00:00:00Z') as unknown as any,
+                    to: new Date('2024-01-02T00:00:00Z') as unknown as any,
+                    raw: { from: 'now-1h', to: 'now' },
+                },
+            },
+            options: {
+                content: 'graph TD\n{{#each data}}\n    node_${__index}["${__data.fields.Name}: ${__data.fields.CPU}"]\n{{/each}}',
+                escapeSpecialChars: false,
+            },
+        });
+        render(<GrafmaidPanel {...props} />);
+
+        await waitFor(() => {
+            expect(mockedMermaid.render).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.stringContaining('node_0["DB: 75"]')
+            );
+            expect(mockedMermaid.render).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.stringContaining('node_1["Cache: 90"]')
+            );
+        });
+    });
+
+    it('空 data.series 搭配 {{#each data}} 區塊不應出錯', async () => {
+        mockedMermaid.render.mockResolvedValue({ svg: '<svg></svg>', bindFunctions: jest.fn() });
+
+        const props = createDefaultProps({
+            options: {
+                content: 'graph TD\n    A --> B\n{{#each data}}\n    A --> ${__data.fields.Name}\n{{/each}}',
+                escapeSpecialChars: true,
+            },
+        });
+        render(<GrafmaidPanel {...props} />);
+
+        await waitFor(() => {
+            // data block 被移除，僅渲染靜態部分
+            expect(mockedMermaid.render).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.stringContaining('A --> B')
+            );
+        });
     });
 
     it('{{#each}} 區塊應展開多選變數為多行', async () => {

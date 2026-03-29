@@ -7,7 +7,7 @@ Grafmaid 是一個 Grafana Panel 外掛程式，將 [Mermaid.js](https://github.
 ### 核心設計理念
 
 1. **以文字驅動視覺化** — 使用者用純文字的 Mermaid 語法描述圖表，不需要拖拉式編輯器
-2. **與 Grafana 生態系深度整合** — 支援 Dashboard Variables、主題切換、響應式縮放
+2. **與 Grafana 生態系深度整合** — 支援 Dashboard Variables、Data Queries、Field Config (Units / Thresholds / Value Mappings)、主題切換、響應式縮放
 3. **安全優先** — `securityLevel: 'strict'` 防止 XSS，特殊字元自動跳脫
 
 ---
@@ -17,15 +17,20 @@ Grafmaid 是一個 Grafana Panel 外掛程式，將 [Mermaid.js](https://github.
 ```
 src/
 ├── components/
-│   ├── GrafmaidPanel.tsx          # 面板主元件，負責生命週期與渲染
-│   └── GrafmaidPanel.test.tsx     # 元件 Unit Test
+│   └── GrafmaidPanel.tsx          # 面板主元件，負責生命週期與渲染
 ├── utils/
-│   ├── mermaidVariables.ts        # 變數處理工具函式
-│   └── mermaidVariables.test.ts   # 工具函式 Unit Test
-├── module.ts                      # 外掛程式進入點，面板選項定義
+│   ├── dataFrameExpander.ts       # Data Frame 查詢結果展開 (data blocks / 單值 / labels)
+│   └── mermaidVariables.ts        # Dashboard Variables 處理工具函式
+├── module.ts                      # 外掛程式進入點，面板選項與 Field Config 定義
 ├── types.ts                       # TypeScript 型別定義
 └── plugin.json                    # 外掛程式中繼資料
 tests/
+├── unit/
+│   ├── components/
+│   │   └── GrafmaidPanel.test.tsx # 元件 Unit Test
+│   └── utils/
+│       ├── dataFrameExpander.test.ts  # Data Frame 展開 Unit Test
+│       └── mermaidVariables.test.ts   # 變數處理 Unit Test
 └── panel.spec.ts                  # E2E Test (Playwright + @grafana/plugin-e2e)
 ```
 
@@ -35,9 +40,16 @@ tests/
 使用者輸入 Mermaid Content
         │
         ▼
-┌─ expandEachBlocks() ─┐
-│  展開 {{#each}} 區塊  │  ← 多選變數展開為多行
-└───────────────────────┘
+┌─ expandDataBlocks() ──┐
+│  展開 Data Frame 引用  │  ← 查詢結果 (data.series)
+│  {{#each data}} 迭代   │  ← 多列展開
+│  ${__data.*} 單值/label │  ← 直接引用
+└────────────────────────┘
+        │
+        ▼
+┌─ expandEachBlocks() ──┐
+│  展開 {{#each}} 區塊   │  ← 多選 Dashboard Variables 展開
+└────────────────────────┘
         │
         ▼
 ┌─ replaceVariables() ──┐
@@ -182,7 +194,103 @@ graph TD
 
 此範例中 `$source`、`$env` 為一般單選變數，`destinations` 為多選變數。`{{#each}}` 區塊先展開後，再由 `replaceVariables` 統一置換 `$source`、`$env`。
 
-### 4. 特殊字元跳脫
+### 4. Data Queries 整合
+
+面板支援 Grafana 的 Data Source 查詢，讓 Mermaid 圖表能根據即時資料動態更新。啟用 `useFieldConfig()` 後，Standard Options (Units、Thresholds、Value Mappings、Color scheme 等) 皆可在面板 editor 中設定。
+
+#### Standard Options 預設值
+
+| 選項 | 預設值 |
+|------|--------|
+| Color scheme | From thresholds (by value) |
+| Thresholds | Base: green, 80: red |
+
+#### 語法總覽
+
+##### 簡寫語法（自動取第一個非 Time 值欄位）
+
+```
+${__data.CPU_A}              — 原始值（依 refId 指定 series）
+${__data.CPU_A:display}      — 格式化值（套用 unit、decimals、value mapping）
+${__data.CPU_A:color}        — 顏色（由 Color scheme 控制，預設依 thresholds）
+```
+
+##### 完整語法（指定欄位名稱）
+
+```
+${__data.fields.Value}                   — series[0] 的 Value 欄位
+${__data.CPU_A.fields.Value:display}     — 指定 series + 欄位 + 格式化
+${__data.fields["Field Name"]:display}   — bracket notation（欄位名含空格）
+${__data.fields[0]}                      — 依欄位索引
+```
+
+##### Label 存取
+
+```
+${__data.CPU_A.labels.http_status}   — 取值欄位的 label
+${__data.labels.server}              — series[0] 的 label
+```
+
+##### 迭代模式（多列展開）
+
+```
+{{#each data}}             — 迭代 series[0] 的每一列
+{{#each data.1}}           — 迭代 series[1]
+{{#each data.CPU_A}}       — 依 refId 或 series name 指定
+```
+
+迭代區塊內可使用 `${__index}` (列索引) 和 `${__rowCount}` (總列數)。
+
+#### Series 解析優先順序
+
+`${__data.CPU_A.fields.Value}` 中的 `CPU_A` 依以下順序匹配：
+
+1. **refId** — query 的 reference ID（如 A、B 或自訂名稱 CPU_A）
+2. **series name** — DataFrame 的 name 屬性
+3. 未匹配時保留原樣
+
+#### 範例：單值模式
+
+查詢 `CPU_A` 回傳 CPU 使用率，搭配 Thresholds (0: green, 80: red)：
+
+```
+graph LR
+    A["${__data.CPU_A.labels.server}"] --> B["CPU: ${__data.CPU_A:display}"]
+    style B fill:${__data.CPU_A:color},color:#fff
+```
+
+展開結果（假設最後一列 CPU = 92%，label server = "Apache HTTP Server"）：
+
+```
+graph LR
+    A["Apache HTTP Server"] --> B["CPU: 92%"]
+    style B fill:#F2495C,color:#fff
+```
+
+#### 範例：迭代模式
+
+查詢回傳多列服務資料：
+
+```
+graph TD
+    {{#each data}}
+    node_${__index}["${__data.fields.Name}: ${__data.fields.Value:display}"]
+    style node_${__index} fill:${__data.fields.Value:color}
+    {{/each}}
+```
+
+#### 範例：混合 Data Queries 與 Dashboard Variables
+
+```
+graph TD
+    title["Environment: $env"]
+    {{#each data.CPU_A}}
+    svc_${__index}["${__data.fields.Name}"]
+    title --> svc_${__index}
+    {{/each}}
+```
+
+### 5. 特殊字元跳脫
 
 **面板選項**：Escape special characters（預設開啟）
 
@@ -223,7 +331,7 @@ graph TD
 
 > **注意**：如果你的變數值本身就包含有意義的 Mermaid 語法（例如變數值就是一段連線定義 `-->`），請關閉此選項。
 
-### 5. 未定義變數偵測
+### 6. 未定義變數偵測
 
 面板會自動掃描 Mermaid Content 中的 `$varName` / `${varName}` 引用，並透過 Grafana 的 `replaceVariables` API 逐一確認變數是否存在。
 
@@ -234,11 +342,11 @@ graph TD
 
 `$offsetX`, `$offsetY`, `$color`, `$textColor`, `$lineColor`, `$stroke`, `$fill`, `$bgColor`, `$TICKET`, `$style`, `$classDef`
 
-### 6. 語法預驗證
+### 7. 語法預驗證
 
 渲染前先呼叫 `mermaid.parse()` 驗證語法。相較於直接呼叫 `mermaid.render()` 出錯，`parse()` 能提供更精確且乾淨的錯誤訊息，不會留下殘餘的 DOM 元素。
 
-### 7. 錯誤呈現
+### 8. 錯誤呈現
 
 遵循 Grafana 官方 best practices，使用 `@grafana/ui` 的 `Alert` 元件呈現錯誤：
 
@@ -248,7 +356,7 @@ graph TD
   - 可展開的 `<details>` 區塊顯示置換後的完整內容，方便除錯
 - **`console.error`** — 技術細節記錄到瀏覽器 console
 
-### 8. 響應式縮放與主題切換
+### 9. 響應式縮放與主題切換
 
 - **響應式**：渲染後的 SVG 設為 `maxWidth: 100%` / `maxHeight: 100%`，隨面板大小自動縮放
 - **主題**：根據 Grafana 的 `theme.isDark` 自動切換 Mermaid 主題 (`dark` / `default`)
@@ -275,8 +383,9 @@ npm run test:ci   # CI mode
 
 | 測試檔案 | 測試數 | 涵蓋範圍 |
 |----------|--------|----------|
-| `src/utils/mermaidVariables.test.ts` | 22 | `escapeMermaidChars`, `mermaidSafeFormat`, `expandEachBlocks`, `detectUnresolvedVariables` |
-| `src/components/GrafmaidPanel.test.tsx` | 13 | 元件渲染、變數置換整合、錯誤處理、警告顯示、`{{#each}}` 展開 |
+| `tests/unit/utils/mermaidVariables.test.ts` | 22 | `escapeMermaidChars`, `mermaidSafeFormat`, `expandEachBlocks`, `detectUnresolvedVariables` |
+| `tests/unit/utils/dataFrameExpander.test.ts` | 49 | `expandDataBlocks`: 欄位替換、display/color 修飾符、series selector (index/refId/name)、label 存取、簡寫語法、null 處理、escape |
+| `tests/unit/components/GrafmaidPanel.test.tsx` | 15 | 元件渲染、變數置換整合、錯誤處理、警告顯示、`{{#each}}` 展開、data.series 整合 |
 
 ### E2E Test (Playwright + @grafana/plugin-e2e)
 
@@ -294,26 +403,6 @@ npm run e2e       # Terminal 2: 執行 E2E 測試
 ## 未來擴充方向
 
 ### 短期 (Near-term)
-
-#### Data Frame 驅動的動態圖表
-
-目前 Mermaid Content 是靜態文字 + 變數置換。下一步可以讓 query 回傳的 Data Frame 驅動圖表內容：
-
-```
-# 構想：用 query 回傳的 data frame 自動產生節點與連線
-# data frame columns: source, target, label
-#
-# 自動產生：
-# graph TD
-#     web-api --> database
-#     web-api --> cache
-#     worker --> queue
-```
-
-實作方向：
-- 新增 `dataMode` 選項：`static`（目前）/ `data-driven`
-- `data-driven` 模式下，定義 column mapping（source、target、label、style）
-- 使用模板語法讓使用者自訂 data frame 如何轉換為 Mermaid 節點
 
 #### 自訂 Mermaid Theme
 
