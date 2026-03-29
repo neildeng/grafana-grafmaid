@@ -229,17 +229,24 @@ jobs:
       #     path: grafana-server.log
       #     retention-days: 5
 
-  publish-report:
-    if: ${{ always() && !cancelled() }}
-    permissions:
-      contents: write
-      id-token: write
-      pull-requests: write
-    needs: [playwright-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - name: Publish report
-        uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@deploy-report-pages/v1.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+  # publish-report job 暫時停用：
+  # grafana/plugin-actions/playwright-gh-pages/deploy-report-pages 內部
+  # peaceiris/actions-gh-pages push 後會留下 auth 殘留，
+  # 後續的 actions/checkout 產生 Duplicate Authorization header (HTTP 400)。
+  # 這是 action 內部問題，與 repo URL redirect 有關，無法從外部修正。
+  # E2E 測試結果仍可在 playwright-tests job 的 artifact 和 summary 中查看。
+  #
+  # publish-report:
+  #   if: ${{ always() && !cancelled() }}
+  #   permissions:
+  #     contents: write
+  #     id-token: write
+  #     pull-requests: write
+  #   needs: [playwright-tests]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - name: Publish report
+  #       uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@deploy-report-pages/v1.1.0
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
