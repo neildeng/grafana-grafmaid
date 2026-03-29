@@ -96,6 +96,25 @@ For detailed documentation, see [docs/README.md](https://github.com/neildeng/gra
 
 Apache License 2.0 — see [LICENSE](https://github.com/neildeng/grafana-grafmaid/blob/main/LICENSE).
 
+## Third-Party Notices
+
+This plugin bundles the following open-source software:
+
+| Package | License | Copyright |
+|---------|---------|-----------|
+| [mermaid](https://github.com/mermaid-js/mermaid) | MIT | © 2014-2022 Knut Sveidqvist |
+| [dagre-d3-es](https://github.com/tbo47/dagre-d3-es) | MIT | © 2013 Chris Pettitt |
+| [dayjs](https://github.com/iamkun/dayjs) | MIT | © 2018-present iamkun |
+| [lodash-es](https://github.com/lodash/lodash) | MIT | © OpenJS Foundation |
+| [marked](https://github.com/markedjs/marked) | MIT | © 2018+ MarkedJS |
+| [roughjs](https://github.com/rough-stuff/rough) | MIT | © 2019 Preet Shihn |
+| [KaTeX](https://github.com/KaTeX/KaTeX) | MIT | © 2013-2020 Khan Academy |
+| [stylis](https://github.com/thysultan/stylis) | MIT | © 2016-present Sultan Tarimo |
+| [uuid](https://github.com/uuidjs/uuid) | MIT | © 2010-2020 Robert Kieffer |
+| [DOMPurify](https://github.com/cure53/DOMPurify) | MPL-2.0 OR Apache-2.0 | © 2024 Cure53 |
+
+Full license texts are available in the [NOTICES](https://github.com/neildeng/grafana-grafmaid/blob/main/NOTICES) file.
+
 ## Version
 
 %VERSION% (built on %TODAY%)
