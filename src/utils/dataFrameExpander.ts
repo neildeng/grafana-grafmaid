@@ -191,10 +191,12 @@ function replaceFieldPlaceholders(
             // Label 存取：${__data.CPU_A.labels.http_status}
             if (labelName !== undefined) {
                 const valueField = getValueField(frame);
-                const labelValue = valueField?.labels?.[labelName];
-                if (labelValue === undefined) {
+                const labels = valueField?.labels;
+                // hasOwnProperty 防護：避免 __proto__ / constructor 等 prototype 屬性被意外存取
+                if (!labels || !Object.prototype.hasOwnProperty.call(labels, labelName)) {
                     return _match;
                 }
+                const labelValue = labels[labelName];
                 return escapeValues ? escapeMermaidChars(labelValue) : labelValue;
             }
 
@@ -280,7 +282,8 @@ function replaceFieldPlaceholders(
 export function expandDataBlocks(
     content: string,
     series: DataFrame[],
-    escapeValues: boolean
+    escapeValues: boolean,
+    maxRows: number = 0
 ): string {
     // Phase 1：展開 {{#each data}} / {{#each data.N}} / {{#each data.refId}} 區塊
     const blockPattern = /\{\{#each\s+(data(?:\.[\w]+)?)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
@@ -295,11 +298,12 @@ export function expandDataBlocks(
         }
 
         const fieldMap = buildFieldMap(frame);
-        const rowCount = frame.length;
+        // maxRows > 0 時限制展開列數，防止大量資料凍結瀏覽器
+        const rowCount = maxRows > 0 ? Math.min(frame.length, maxRows) : frame.length;
         const rows: string[] = [];
 
         for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-            rows.push(replaceFieldPlaceholders(template, fieldMap, frame, rowIndex, rowCount, escapeValues, series));
+            rows.push(replaceFieldPlaceholders(template, fieldMap, frame, rowIndex, frame.length, escapeValues, series));
         }
 
         return rows.join('\n');

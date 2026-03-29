@@ -46,5 +46,15 @@ export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel)
             name: 'Escape special characters',
             description: '自動跳脫變數值中的 Mermaid 特殊字元 ([ ] { } | > < 等)，避免變數內容破壞圖表語法。',
             defaultValue: true,
+        })
+        .addNumberInput({
+            path: 'maxDataRows',
+            name: 'Max data rows',
+            description: '{{#each data}} 迭代展開的最大列數。設為 0 表示不限制。過大的值可能影響渲染效能。',
+            defaultValue: 100,
+            settings: {
+                min: 0,
+                integer: true,
+            },
         });
 });

@@ -3,6 +3,7 @@ import { PanelProps } from '@grafana/data';
 import { GrafmaidOptions } from 'types';
 import { css, cx } from '@emotion/css';
 import { Alert, useStyles2, useTheme2 } from '@grafana/ui';
+import DOMPurify from 'dompurify';
 import mermaid from 'mermaid';
 import { expandEachBlocks, mermaidSafeFormat, detectUnresolvedVariables } from 'utils/mermaidVariables';
 import { expandDataBlocks } from 'utils/dataFrameExpander';
@@ -47,7 +48,8 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
     const dataExpandedContent = expandDataBlocks(
         options.content ?? '',
         data.series,
-        options.escapeSpecialChars
+        options.escapeSpecialChars,
+        options.maxDataRows
     );
 
     // 1. 展開 {{#each}} 區塊 (多選變數展開)
@@ -82,7 +84,11 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                 await mermaid.parse(resolvedContent);
 
                 const { svg } = await mermaid.render(mermaidId, resolvedContent);
-                containerRef.current.innerHTML = svg;
+                // Defense-in-depth：即使 Mermaid strict mode 已消毒，
+                // 仍以 DOMPurify 二次過濾 SVG，防止 Mermaid 函式庫未來的迴歸漏洞
+                containerRef.current.innerHTML = DOMPurify.sanitize(svg, {
+                    USE_PROFILES: { svg: true, svgFilters: true },
+                });
                 setError(null);
 
                 // 將 SVG 改為響應式，讓圖表隨面板大小自動縮放
