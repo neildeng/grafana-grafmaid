@@ -1,85 +1,91 @@
 # Grafmaid — Mermaid.js Diagram Panel for Grafana
 
-## 概述
+> [繁體中文版](README.zh-TW.md)
 
-Grafmaid 是一個 Grafana Panel 外掛程式，將 [Mermaid.js](https://github.com/mermaid-js/mermaid) 圖表引擎整合進 Grafana Dashboard，讓使用者可以直接在面板中撰寫 Mermaid 語法來繪製各式圖表，並透過 Grafana 的 Dashboard Variables 動態控制圖表內容。
+## Overview
 
-### 核心設計理念
+Grafmaid is a Grafana panel plugin that integrates the [Mermaid.js](https://github.com/mermaid-js/mermaid) diagram engine into Grafana Dashboards, allowing users to write Mermaid syntax directly in panels to render various diagrams and dynamically control diagram content through Grafana Dashboard Variables and Data Queries.
 
-1. **以文字驅動視覺化** — 使用者用純文字的 Mermaid 語法描述圖表，不需要拖拉式編輯器
-2. **與 Grafana 生態系深度整合** — 支援 Dashboard Variables、Data Queries、Field Config (Units / Thresholds / Value Mappings)、主題切換、響應式縮放
-3. **安全優先** — `securityLevel: 'strict'` 防止 XSS，特殊字元自動跳脫
+### Core Design Principles
+
+1. **Text-driven visualization** — Users describe diagrams using plain-text Mermaid syntax, no drag-and-drop editor needed
+2. **Deep Grafana ecosystem integration** — Supports Dashboard Variables, Data Queries, Field Config (Units / Thresholds / Value Mappings), theme switching, and responsive scaling
+3. **Security first** — `securityLevel: 'strict'` prevents XSS, automatic special character escaping
 
 ---
 
-## 架構
+## Architecture
 
 ```
 src/
 ├── components/
-│   └── GrafmaidPanel.tsx          # 面板主元件，負責生命週期與渲染
+│   └── GrafmaidPanel.tsx          # Main panel component, lifecycle & rendering
 ├── utils/
-│   ├── dataFrameExpander.ts       # Data Frame 查詢結果展開 (data blocks / 單值 / labels)
-│   └── mermaidVariables.ts        # Dashboard Variables 處理工具函式
-├── module.ts                      # 外掛程式進入點，面板選項與 Field Config 定義
-├── types.ts                       # TypeScript 型別定義
-└── plugin.json                    # 外掛程式中繼資料
+│   ├── dataFrameExpander.ts       # Data Frame query result expansion (data blocks / single value / labels)
+│   └── mermaidVariables.ts        # Dashboard Variables processing utilities
+├── module.ts                      # Plugin entry point, panel options & Field Config definition
+├── types.ts                       # TypeScript type definitions
+└── plugin.json                    # Plugin metadata
 tests/
 ├── unit/
 │   ├── components/
-│   │   └── GrafmaidPanel.test.tsx # 元件 Unit Test
+│   │   └── GrafmaidPanel.test.tsx # Component unit tests
 │   └── utils/
-│       ├── dataFrameExpander.test.ts  # Data Frame 展開 Unit Test
-│       └── mermaidVariables.test.ts   # 變數處理 Unit Test
-└── panel.spec.ts                  # E2E Test (Playwright + @grafana/plugin-e2e)
+│       ├── dataFrameExpander.test.ts  # Data Frame expansion unit tests
+│       └── mermaidVariables.test.ts   # Variable processing unit tests
+└── panel.spec.ts                  # E2E tests (Playwright + @grafana/plugin-e2e)
 ```
 
-### 渲染流程
+### Rendering Pipeline
 
 ```
-使用者輸入 Mermaid Content
+User inputs Mermaid Content
         │
         ▼
 ┌─ expandDataBlocks() ──┐
-│  展開 Data Frame 引用  │  ← 查詢結果 (data.series)
-│  {{#each data}} 迭代   │  ← 多列展開
-│  ${__data.*} 單值/label │  ← 直接引用
+│  Expand Data Frame     │  ← Query results (data.series)
+│  {{#each data}} iter   │  ← Multi-row expansion
+│  ${__data.*} single/   │  ← Direct reference
+│  label                 │
 └────────────────────────┘
         │
         ▼
 ┌─ expandEachBlocks() ──┐
-│  展開 {{#each}} 區塊   │  ← 多選 Dashboard Variables 展開
+│  Expand {{#each}}      │  ← Multi-value Dashboard Variables
+│  blocks                │
 └────────────────────────┘
         │
         ▼
 ┌─ replaceVariables() ──┐
-│  置換 $var / ${var}    │  ← Grafana Dashboard Variables
-│  + mermaidSafeFormat   │  ← 選用：特殊字元跳脫
+│  Substitute $var /     │  ← Grafana Dashboard Variables
+│  ${var}                │
+│  + mermaidSafeFormat   │  ← Optional: special char escaping
 └────────────────────────┘
         │
         ▼
 ┌─ detectUnresolvedVariables() ─┐
-│  偵測未定義的變數引用          │  → Alert severity="warning"
+│  Detect undefined variable    │  → Alert severity="warning"
+│  references                   │
 └───────────────────────────────┘
         │
         ▼
 ┌─ mermaid.parse() ─────┐
-│  語法預驗證             │  → 失敗時提供精確錯誤訊息
+│  Syntax pre-validation │  → Precise error messages on failure
 └────────────────────────┘
         │
         ▼
 ┌─ mermaid.render() ────┐
-│  渲染 SVG 圖表         │  → 嵌入面板 + 響應式縮放
+│  Render SVG diagram    │  → Embed in panel + responsive scaling
 └────────────────────────┘
 ```
 
 ---
 
-## 功能詳解
+## Features
 
-### 1. 基本圖表渲染
+### 1. Basic Diagram Rendering
 
-在面板選項的 **Mermaid Content** 中輸入任何 Mermaid 語法即可渲染：
+Enter any Mermaid syntax in the **Mermaid Content** panel option to render:
 
 ```mermaid
 graph TD
@@ -90,28 +96,28 @@ graph TD
     C -->|Three| F[Car]
 ```
 
-**支援的圖表類型**（涵蓋 Mermaid.js 全部類型）：
+**Supported diagram types** (all Mermaid.js types):
 
-| 類型 | 語法關鍵字 | 說明 |
-|------|-----------|------|
-| Flowchart | `graph`, `flowchart` | 流程圖 |
-| Sequence Diagram | `sequenceDiagram` | 循序圖 |
-| Class Diagram | `classDiagram` | 類別圖 |
-| State Diagram | `stateDiagram-v2` | 狀態圖 |
-| ER Diagram | `erDiagram` | 實體關係圖 |
-| Gantt Chart | `gantt` | 甘特圖 |
-| Pie Chart | `pie` | 圓餅圖 |
-| Mindmap | `mindmap` | 心智圖 |
-| Timeline | `timeline` | 時間軸 |
-| Git Graph | `gitGraph` | Git 分支圖 |
-| C4 Diagram | `C4Component` | C4 架構圖 |
-| Quadrant Chart | `quadrantChart` | 象限圖 |
-| Kanban | `kanban` | 看板 |
-| Architecture | `architecture-beta` | 架構圖 |
-| Packet | `packet` | 封包圖 |
-| Radar | `radar-beta` | 雷達圖 |
+| Type | Syntax Keyword | Description |
+|------|---------------|-------------|
+| Flowchart | `graph`, `flowchart` | Flow chart |
+| Sequence Diagram | `sequenceDiagram` | Sequence diagram |
+| Class Diagram | `classDiagram` | Class diagram |
+| State Diagram | `stateDiagram-v2` | State diagram |
+| ER Diagram | `erDiagram` | Entity-relationship diagram |
+| Gantt Chart | `gantt` | Gantt chart |
+| Pie Chart | `pie` | Pie chart |
+| Mindmap | `mindmap` | Mind map |
+| Timeline | `timeline` | Timeline |
+| Git Graph | `gitGraph` | Git branch graph |
+| C4 Diagram | `C4Component` | C4 architecture diagram |
+| Quadrant Chart | `quadrantChart` | Quadrant chart |
+| Kanban | `kanban` | Kanban board |
+| Architecture | `architecture-beta` | Architecture diagram |
+| Packet | `packet` | Packet diagram |
+| Radar | `radar-beta` | Radar chart |
 
-#### 截圖
+#### Screenshots
 
 ![Flowchart, Sequence, State diagrams](../src/img/basic-graph-1.png)
 
@@ -119,11 +125,11 @@ graph TD
 
 ![Git Graph, C4 Component, Packet diagrams](../src/img/basic-graph-3.png)
 
-### 2. Dashboard Variables 置換
+### 2. Dashboard Variables Substitution
 
-支援 Grafana 的 [Dashboard Variables](https://grafana.com/docs/grafana/latest/dashboards/variables/)，在 Mermaid Content 中使用 `$varName` 或 `${varName}` 語法引用變數。
+Supports Grafana [Dashboard Variables](https://grafana.com/docs/grafana/latest/dashboards/variables/). Use `$varName` or `${varName}` syntax to reference variables in Mermaid Content.
 
-#### 單選變數
+#### Single-value Variables
 
 ```
 # Dashboard Variable: env = "Production"
@@ -132,27 +138,27 @@ graph TD
     A[Service] --> B[$env]
 ```
 
-渲染結果中 `$env` 會被置換為 `Production`。
+`$env` is replaced with `Production` in the rendered output.
 
-#### 格式指定
+#### Format Specifiers
 
-可搭配 Grafana 的 [Variable format](https://grafana.com/docs/grafana/latest/dashboards/variables/variable-syntax/#advanced-variable-format-options) 語法：
+Works with Grafana [Variable format](https://grafana.com/docs/grafana/latest/dashboards/variables/variable-syntax/#advanced-variable-format-options) syntax:
 
-- `${var:text}` — 文字格式
-- `${var:csv}` — 逗號分隔
-- `${var:pipe}` — Pipe 分隔
+- `${var:text}` — Text format
+- `${var:csv}` — Comma-separated
+- `${var:pipe}` — Pipe-separated
 
-#### 截圖
+#### Screenshot
 
 ![Dashboard Variables integration](../src/img/variables.png)
 
-### 3. 多選變數展開 (`{{#each}}`)
+### 3. Multi-value Variable Expansion (`{{#each}}`)
 
-當 Dashboard Variable 設定為 **Multi-value** 時，單純的 `$var` 置換會產生 `A, B, C` 這樣的合併字串，無法直接用於 Mermaid 的節點或連線定義。
+When a Dashboard Variable is set to **Multi-value**, a simple `$var` substitution produces a merged string like `A, B, C`, which cannot be used directly in Mermaid node or edge definitions.
 
-**解決方案**：使用 `{{#each varName}}...{{/each}}` 模板語法，將多選變數的每個值展開為獨立的 Mermaid 定義。
+**Solution**: Use `{{#each varName}}...{{/each}}` template syntax to expand each value of a multi-value variable into separate Mermaid definitions.
 
-#### 語法
+#### Syntax
 
 ```
 {{#each varName}}
@@ -160,16 +166,16 @@ graph TD
 {{/each}}
 ```
 
-| 佔位符 | 說明 |
-|--------|------|
-| `{{value}}` | 當前迭代的變數值 |
-| `{{index}}` | 當前迭代的索引 (從 0 開始) |
+| Placeholder | Description |
+|-------------|-------------|
+| `{{value}}` | Current iteration value |
+| `{{index}}` | Current iteration index (0-based) |
 
-#### 範例：動態拓撲圖
+#### Example: Dynamic Topology
 
-假設 Dashboard Variable `targets` 為 Multi-value，選取了 `DB`、`Cache`、`Queue`：
+Assume Dashboard Variable `targets` is Multi-value with selected values `DB`, `Cache`, `Queue`:
 
-**輸入**：
+**Input**:
 
 ```
 graph TD
@@ -180,7 +186,7 @@ graph TD
 {{/each}}
 ```
 
-**展開後**：
+**Expanded**:
 
 ```
 graph TD
@@ -193,7 +199,7 @@ graph TD
     Service --> target_2
 ```
 
-#### 範例：混合使用一般變數與 `{{#each}}`
+#### Example: Mixing Regular Variables with `{{#each}}`
 
 ```
 graph TD
@@ -204,66 +210,66 @@ graph TD
 {{/each}}
 ```
 
-此範例中 `$source`、`$env` 為一般單選變數，`destinations` 為多選變數。`{{#each}}` 區塊先展開後，再由 `replaceVariables` 統一置換 `$source`、`$env`。
+In this example, `$source` and `$env` are regular single-value variables, while `destinations` is a multi-value variable. The `{{#each}}` block expands first, then `replaceVariables` substitutes `$source` and `$env`.
 
-### 4. Data Queries 整合
+### 4. Data Queries Integration
 
-面板支援 Grafana 的 Data Source 查詢，讓 Mermaid 圖表能根據即時資料動態更新。啟用 `useFieldConfig()` 後，Standard Options (Units、Thresholds、Value Mappings、Color scheme 等) 皆可在面板 editor 中設定。
+The panel supports Grafana Data Source queries, enabling Mermaid diagrams to update dynamically based on live data. With `useFieldConfig()` enabled, Standard Options (Units, Thresholds, Value Mappings, Color scheme, etc.) are all configurable in the panel editor.
 
-#### Standard Options 預設值
+#### Standard Options Defaults
 
-| 選項 | 預設值 |
-|------|--------|
+| Option | Default |
+|--------|---------|
 | Color scheme | From thresholds (by value) |
 | Thresholds | Base: green, 80: red |
 
-#### 語法總覽
+#### Syntax Overview
 
-##### 簡寫語法（自動取第一個非 Time 值欄位）
-
-```
-${__data.CPU_A}              — 原始值（依 refId 指定 series）
-${__data.CPU_A:display}      — 格式化值（套用 unit、decimals、value mapping）
-${__data.CPU_A:color}        — 顏色（由 Color scheme 控制，預設依 thresholds）
-```
-
-##### 完整語法（指定欄位名稱）
+##### Shorthand syntax (auto-selects first non-Time value field)
 
 ```
-${__data.fields.Value}                   — series[0] 的 Value 欄位
-${__data.CPU_A.fields.Value:display}     — 指定 series + 欄位 + 格式化
-${__data.fields["Field Name"]:display}   — bracket notation（欄位名含空格）
-${__data.fields[0]}                      — 依欄位索引
+${__data.CPU_A}              — Raw value (series by refId)
+${__data.CPU_A:display}      — Formatted value (applies unit, decimals, value mapping)
+${__data.CPU_A:color}        — Color (controlled by Color scheme, defaults to thresholds)
 ```
 
-##### Label 存取
+##### Full syntax (specify field name)
 
 ```
-${__data.CPU_A.labels.http_status}   — 取值欄位的 label
-${__data.labels.server}              — series[0] 的 label
+${__data.fields.Value}                   — Value field of series[0]
+${__data.CPU_A.fields.Value:display}     — Specific series + field + formatting
+${__data.fields["Field Name"]:display}   — Bracket notation (field names with spaces)
+${__data.fields[0]}                      — By field index
 ```
 
-##### 迭代模式（多列展開）
+##### Label Access
 
 ```
-{{#each data}}             — 迭代 series[0] 的每一列
-{{#each data.1}}           — 迭代 series[1]
-{{#each data.CPU_A}}       — 依 refId 或 series name 指定
+${__data.CPU_A.labels.http_status}   — Label from the value field
+${__data.labels.server}              — Label from series[0]
 ```
 
-迭代區塊內可使用 `${__index}` (列索引) 和 `${__rowCount}` (總列數)。
+##### Iteration Mode (multi-row expansion)
 
-#### Series 解析優先順序
+```
+{{#each data}}             — Iterate over every row of series[0]
+{{#each data.1}}           — Iterate over series[1]
+{{#each data.CPU_A}}       — By refId or series name
+```
 
-`${__data.CPU_A.fields.Value}` 中的 `CPU_A` 依以下順序匹配：
+Inside iteration blocks, use `${__index}` (row index) and `${__rowCount}` (total rows).
 
-1. **refId** — query 的 reference ID（如 A、B 或自訂名稱 CPU_A）
-2. **series name** — DataFrame 的 name 屬性
-3. 未匹配時保留原樣
+#### Series Resolution Priority
 
-#### 範例：單值模式
+The `CPU_A` in `${__data.CPU_A.fields.Value}` is matched in the following order:
 
-查詢 `CPU_A` 回傳 CPU 使用率，搭配 Thresholds (0: green, 80: red)：
+1. **refId** — The query reference ID (e.g., A, B, or custom name CPU_A)
+2. **series name** — The DataFrame's name property
+3. If no match is found, the placeholder is left as-is
+
+#### Example: Single-value Mode
+
+Query `CPU_A` returns CPU usage, with Thresholds (0: green, 80: red):
 
 ```
 graph LR
@@ -271,7 +277,7 @@ graph LR
     style B fill:${__data.CPU_A:color},color:#fff
 ```
 
-展開結果（假設最後一列 CPU = 92%，label server = "Apache HTTP Server"）：
+Expanded result (assuming last row CPU = 92%, label server = "Apache HTTP Server"):
 
 ```
 graph LR
@@ -279,9 +285,9 @@ graph LR
     style B fill:#F2495C,color:#fff
 ```
 
-#### 範例：迭代模式
+#### Example: Iteration Mode
 
-查詢回傳多列服務資料：
+Query returns multi-row service data:
 
 ```
 graph TD
@@ -291,7 +297,7 @@ graph TD
     {{/each}}
 ```
 
-#### 範例：混合 Data Queries 與 Dashboard Variables
+#### Example: Mixing Data Queries with Dashboard Variables
 
 ```
 graph TD
@@ -302,155 +308,156 @@ graph TD
     {{/each}}
 ```
 
-#### 截圖
+#### Screenshot
 
 ![Data Queries with threshold coloring](../src/img/queries.png)
 
-### 5. 特殊字元跳脫
+### 5. Special Character Escaping
 
-**面板選項**：Escape special characters（預設開啟）
+**Panel option**: Escape special characters (enabled by default)
 
-當變數值包含 Mermaid 語法的特殊字元（如 `[ ] { } ( ) | > <`），這些字元會破壞圖表結構。
+When variable values contain Mermaid syntax special characters (e.g., `[ ] { } ( ) | > <`), they can break the diagram structure.
 
-#### 問題
+#### Problem
 
 ```
 # $service = "Web [v2.0]"
 graph TD
     A[$service] --> B
-# 置換後：A[Web [v2.0]] → 中括號巢狀，語法錯誤
+# After substitution: A[Web [v2.0]] → Nested brackets, syntax error
 ```
 
-#### 解決方案
+#### Solution
 
-開啟 **Escape special characters** 後，變數值中的特殊字元會自動轉換為 Mermaid 的 `#code;` 字元實體：
+With **Escape special characters** enabled, special characters in variable values are automatically converted to Mermaid `#code;` character entities:
 
 ```
-# 置換後：A[Web #91;v2.0#93;] → 正確渲染為 "Web [v2.0]"
+# After substitution: A[Web #91;v2.0#93;] → Correctly renders as "Web [v2.0]"
 ```
 
-#### 跳脫對照表
+#### Escape Reference Table
 
-| 原始字元 | 跳脫後 | 說明 |
-|----------|--------|------|
-| `#` | `#35;` | Hash (優先處理避免雙重跳脫) |
-| `[` | `#91;` | 左中括號 |
-| `]` | `#93;` | 右中括號 |
-| `{` | `#123;` | 左大括號 |
-| `}` | `#125;` | 右大括號 |
-| `(` | `#40;` | 左小括號 |
-| `)` | `#41;` | 右小括號 |
+| Original | Escaped | Description |
+|----------|---------|-------------|
+| `#` | `#35;` | Hash (processed first to avoid double-escaping) |
+| `[` | `#91;` | Left bracket |
+| `]` | `#93;` | Right bracket |
+| `{` | `#123;` | Left brace |
+| `}` | `#125;` | Right brace |
+| `(` | `#40;` | Left parenthesis |
+| `)` | `#41;` | Right parenthesis |
 | `\|` | `#124;` | Pipe |
-| `>` | `#62;` | 大於 |
-| `<` | `#60;` | 小於 |
-| `"` | `#34;` | 雙引號 |
+| `>` | `#62;` | Greater than |
+| `<` | `#60;` | Less than |
+| `"` | `#34;` | Double quote |
 
-> **注意**：如果你的變數值本身就包含有意義的 Mermaid 語法（例如變數值就是一段連線定義 `-->`），請關閉此選項。
+> **Note**: If your variable values intentionally contain meaningful Mermaid syntax (e.g., the value is a connection definition `-->`), disable this option.
 
-### 6. 未定義變數偵測
+### 6. Unresolved Variable Detection
 
-面板會自動掃描 Mermaid Content 中的 `$varName` / `${varName}` 引用，並透過 Grafana 的 `replaceVariables` API 逐一確認變數是否存在。
+The panel automatically scans `$varName` / `${varName}` references in Mermaid Content and verifies each variable's existence through Grafana's `replaceVariables` API.
 
-- **未定義的變數**：以 `Alert severity="warning"` 在面板頂部顯示警告
-- **Mermaid 內建 `$` 變數**：自動排除，不會誤報（如 C4 diagram 的 `$offsetX`、`$offsetY`）
+- **Undefined variables**: Displayed as an `Alert severity="warning"` at the top of the panel
+- **Mermaid built-in `$` variables**: Automatically excluded to prevent false positives (e.g., C4 diagram's `$offsetX`, `$offsetY`)
 
-#### 已排除的 Mermaid 內建變數
+#### Excluded Mermaid Built-in Variables
 
 `$offsetX`, `$offsetY`, `$color`, `$textColor`, `$lineColor`, `$stroke`, `$fill`, `$bgColor`, `$TICKET`, `$style`, `$classDef`
 
-### 7. 語法預驗證
+### 7. Syntax Pre-validation
 
-渲染前先呼叫 `mermaid.parse()` 驗證語法。相較於直接呼叫 `mermaid.render()` 出錯，`parse()` 能提供更精確且乾淨的錯誤訊息，不會留下殘餘的 DOM 元素。
+Before rendering, `mermaid.parse()` is called to validate syntax. Compared to letting `mermaid.render()` fail, `parse()` provides more precise and clean error messages without leaving residual DOM elements.
 
-### 8. 錯誤呈現
+### 8. Error Presentation
 
-遵循 Grafana 官方 best practices，使用 `@grafana/ui` 的 `Alert` 元件呈現錯誤：
+Following Grafana official best practices, errors are displayed using `@grafana/ui`'s `Alert` component:
 
-- **`severity="warning"`** — 未定義變數警告
-- **`severity="error"`** — Mermaid 語法或渲染錯誤
-  - 顯示錯誤訊息
-  - 可展開的 `<details>` 區塊顯示置換後的完整內容，方便除錯
-- **`console.error`** — 技術細節記錄到瀏覽器 console
+- **`severity="warning"`** — Unresolved variable warnings
+- **`severity="error"`** — Mermaid syntax or rendering errors
+  - Displays error message
+  - Expandable `<details>` block showing the fully resolved content for debugging
+- **`console.error`** — Technical details logged to browser console
 
-### 9. 響應式縮放與主題切換
+### 9. Responsive Scaling & Theme Switching
 
-- **響應式**：渲染後的 SVG 設為 `maxWidth: 100%` / `maxHeight: 100%`，隨面板大小自動縮放
-- **主題**：根據 Grafana 的 `theme.isDark` 自動切換 Mermaid 主題 (`dark` / `default`)
-
----
-
-## 面板選項
-
-| 選項 | 型別 | 預設值 | 說明 |
-|------|------|--------|------|
-| Mermaid Content | `string` (textarea) | 範例 flowchart | Mermaid 圖表定義語法 |
-| Escape special characters | `boolean` | `true` | 是否自動跳脫變數值中的特殊字元 |
+- **Responsive**: Rendered SVG is set to `maxWidth: 100%` / `maxHeight: 100%`, auto-scaling with panel size
+- **Theme**: Automatically switches Mermaid theme (`dark` / `default`) based on Grafana's `theme.isDark`
 
 ---
 
-## 測試策略
+## Panel Options
 
-### Unit Test (Jest + React Testing Library)
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| Mermaid Content | `string` (textarea) | Example flowchart | Mermaid diagram definition |
+| Escape special characters | `boolean` | `true` | Auto-escape special characters in variable values |
+| Max data rows | `number` | `100` | Maximum rows to expand in `{{#each data}}` blocks (0 = unlimited) |
+
+---
+
+## Testing Strategy
+
+### Unit Tests (Jest + React Testing Library)
 
 ```bash
 npm test          # Watch mode
 npm run test:ci   # CI mode
 ```
 
-| 測試檔案 | 測試數 | 涵蓋範圍 |
-|----------|--------|----------|
+| Test File | Count | Coverage |
+|-----------|-------|----------|
 | `tests/unit/utils/mermaidVariables.test.ts` | 22 | `escapeMermaidChars`, `mermaidSafeFormat`, `expandEachBlocks`, `detectUnresolvedVariables` |
-| `tests/unit/utils/dataFrameExpander.test.ts` | 49 | `expandDataBlocks`: 欄位替換、display/color 修飾符、series selector (index/refId/name)、label 存取、簡寫語法、null 處理、escape |
-| `tests/unit/components/GrafmaidPanel.test.tsx` | 15 | 元件渲染、變數置換整合、錯誤處理、警告顯示、`{{#each}}` 展開、data.series 整合 |
+| `tests/unit/utils/dataFrameExpander.test.ts` | 49 | `expandDataBlocks`: field substitution, display/color modifiers, series selector (index/refId/name), label access, shorthand syntax, null handling, escape |
+| `tests/unit/components/GrafmaidPanel.test.tsx` | 15 | Component rendering, variable substitution integration, error handling, warning display, `{{#each}}` expansion, data.series integration |
 
-### E2E Test (Playwright + @grafana/plugin-e2e)
+### E2E Tests (Playwright + @grafana/plugin-e2e)
 
 ```bash
-npm run server    # Terminal 1: 啟動 Grafana Docker
-npm run e2e       # Terminal 2: 執行 E2E 測試
+npm run server    # Terminal 1: Start Grafana Docker
+npm run e2e       # Terminal 2: Run E2E tests
 ```
 
-| 測試檔案 | 測試數 | 涵蓋範圍 |
-|----------|--------|----------|
-| `tests/panel.spec.ts` | 4 | SVG 渲染、錯誤顯示、選項變更、變數置換 |
+| Test File | Count | Coverage |
+|-----------|-------|----------|
+| `tests/panel.spec.ts` | 4 | SVG rendering, error display, option changes, variable substitution |
 
 ---
 
-## 未來擴充方向
+## Future Roadmap
 
-### 短期 (Near-term)
+### Near-term
 
-#### 自訂 Mermaid Theme
+#### Custom Mermaid Theme
 
-目前只支援 `dark` / `default` 兩種主題。可以新增面板選項讓使用者自訂 Mermaid 的 `themeVariables`（節點顏色、邊框樣式、字體大小等），更好地融入不同 Dashboard 的視覺風格。
+Currently only `dark` / `default` themes are supported. A panel option for custom Mermaid `themeVariables` (node colors, border styles, font sizes, etc.) would allow better integration with different Dashboard visual styles.
 
-#### CodeEditor 取代 Textarea
+#### CodeEditor Instead of Textarea
 
-目前 Mermaid Content 使用基本的 textarea。可以整合 Grafana 的 `CodeEditor` 元件（基於 Monaco Editor），提供：
-- Mermaid 語法高亮
-- 自動補全
-- 即時語法錯誤標示
-- 行號顯示
+The current Mermaid Content input uses a basic textarea. Integrating Grafana's `CodeEditor` component (based on Monaco Editor) would provide:
+- Mermaid syntax highlighting
+- Auto-completion
+- Real-time syntax error indicators
+- Line numbers
 
-### 中期 (Mid-term)
+### Mid-term
 
-#### 節點互動與 Data Links
+#### Node Interaction & Data Links
 
-讓使用者為 Mermaid 圖表中的節點設定 [Data Links](https://grafana.com/docs/grafana/latest/panels-visualizations/configure-data-links/)，點擊節點時跳轉到其他 Dashboard 或外部 URL：
+Allow users to configure [Data Links](https://grafana.com/docs/grafana/latest/panels-visualizations/configure-data-links/) for Mermaid diagram nodes, navigating to other Dashboards or external URLs on click:
 
 ```
-# 構想：在面板選項中定義 node-to-link mapping
+# Concept: Define node-to-link mapping in panel options
 # A → https://grafana.local/d/service-detail?var-service=A
 ```
 
-實作方向：
-- `securityLevel` 需調整為 `'loose'` 以支援節點的 click event
-- 新增 mapping 設定，將節點 ID 對應到 URL 模板
-- 支援 Grafana 的 `${__data.fields.*}` 語法
+Implementation approach:
+- `securityLevel` would need to be `'loose'` to support node click events
+- New mapping configuration to associate node IDs with URL templates
+- Support Grafana's `${__data.fields.*}` syntax
 
-#### 多圖表分頁
+#### Multi-diagram Tabs
 
-支援在單一面板中定義多個 Mermaid 圖表，以 Tab 分頁呈現：
+Support defining multiple Mermaid diagrams in a single panel, presented as tabs:
 
 ```
 ---tab: Overview---
@@ -462,25 +469,25 @@ sequenceDiagram
     B-->>A: Response
 ```
 
-#### 匯出功能
+#### Export
 
-提供將圖表匯出為 PNG / SVG / PDF 的按鈕，方便在文件或簡報中使用。
+Provide buttons to export diagrams as PNG / SVG / PDF for use in documents or presentations.
 
-### 長期 (Long-term)
+### Long-term
 
-#### 即時協作編輯
+#### Real-time Collaborative Editing
 
-搭配 Grafana 的 Live 功能，讓多個使用者可以同時編輯同一張 Mermaid 圖表，即時看到彼此的變更。
+Leverage Grafana's Live feature to allow multiple users to simultaneously edit the same Mermaid diagram with real-time updates.
 
-#### Annotation 整合
+#### Annotation Integration
 
-將 Grafana Annotations 事件標記在 Mermaid 圖表上。例如在 Gantt chart 上標記部署事件，或在 Sequence Diagram 上標記異常時間點。
+Display Grafana Annotation events on Mermaid diagrams. For example, marking deployment events on Gantt charts or anomaly timestamps on Sequence Diagrams.
 
-#### AI 輔助生成
+#### AI-assisted Generation
 
-整合 LLM 讓使用者用自然語言描述圖表，自動產生 Mermaid 語法：
+Integrate LLMs to let users describe diagrams in natural language and auto-generate Mermaid syntax:
 
 ```
-# 使用者輸入：「畫一個微服務架構圖，包含 API Gateway、User Service、Order Service 和 PostgreSQL」
-# 自動產生對應的 Mermaid flowchart
+# User input: "Draw a microservice architecture with API Gateway, User Service, Order Service, and PostgreSQL"
+# Auto-generates the corresponding Mermaid flowchart
 ```

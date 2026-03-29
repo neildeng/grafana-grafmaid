@@ -123,7 +123,7 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
         >
             {unresolvedVars.length > 0 && (
                 <Alert title="Unresolved variables" severity="warning">
-                    以下變數未在 Dashboard 中定義：{unresolvedVars.map((v: string) => `$${v}`).join(', ')}
+                    The following variables are not defined in the dashboard: {unresolvedVars.map((v: string) => `$${v}`).join(', ')}
                 </Alert>
             )}
             {error && (

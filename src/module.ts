@@ -34,7 +34,7 @@ export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel)
             path: 'content',
             name: 'Mermaid Content',
             description:
-                '輸入 Mermaid 圖表定義語法。支援 $variable 變數置換、{{#each var}}...{{value}}...{{/each}} 多選變數展開，以及 {{#each data}}...${__data.fields.Name}...{{/each}} 查詢結果展開。',
+                'Enter Mermaid diagram definition. Supports $variable substitution, {{#each var}}...{{value}}...{{/each}} multi-value expansion, and {{#each data}}...${__data.fields.Name}...{{/each}} query result expansion.',
             defaultValue: DEFAULT_CONTENT,
             settings: {
                 useTextarea: true,
@@ -44,13 +44,13 @@ export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel)
         .addBooleanSwitch({
             path: 'escapeSpecialChars',
             name: 'Escape special characters',
-            description: '自動跳脫變數值中的 Mermaid 特殊字元 ([ ] { } | > < 等)，避免變數內容破壞圖表語法。',
+            description: 'Automatically escape Mermaid special characters ([ ] { } | > < etc.) in variable values to prevent breaking diagram syntax.',
             defaultValue: true,
         })
         .addNumberInput({
             path: 'maxDataRows',
             name: 'Max data rows',
-            description: '{{#each data}} 迭代展開的最大列數。設為 0 表示不限制。過大的值可能影響渲染效能。',
+            description: 'Maximum number of rows to expand in {{#each data}} blocks. Set to 0 for unlimited. Large values may impact rendering performance.',
             defaultValue: 100,
             settings: {
                 min: 0,
