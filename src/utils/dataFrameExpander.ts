@@ -283,7 +283,7 @@ export function expandDataBlocks(
     content: string,
     series: DataFrame[],
     escapeValues: boolean,
-    maxRows: number = 0
+    maxRows = 0
 ): string {
     // Phase 1：展開 {{#each data}} / {{#each data.N}} / {{#each data.refId}} 區塊
     const blockPattern = /\{\{#each\s+(data(?:\.[\w]+)?)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
