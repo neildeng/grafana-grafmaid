@@ -24,8 +24,8 @@ test.describe('Grafmaid Panel', () => {
         const options = panelEditPage.getCustomOptions('Grafmaid');
         const contentInput = options.getTextInput('Mermaid Content');
         await contentInput.fill('this is not valid mermaid %%%');
-        // 等待渲染完成後，確認錯誤 Alert 出現
-        await expect(panelEditPage.panel.locator.getByText('Mermaid render error')).toBeVisible({ timeout: 15000 });
+        // Alert 可能渲染在 panel locator scope 之外，使用 page scope
+        await expect(page.getByText('Mermaid render error')).toBeVisible({ timeout: 15000 });
     });
 
     test('should update diagram when Mermaid Content option changes', async ({
