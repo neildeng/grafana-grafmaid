@@ -17,21 +17,25 @@ test.describe('Grafmaid Panel', () => {
     });
 
     test('should display error alert when Mermaid syntax is invalid', async ({
-        panelEditPage,
+        gotoPanelEditPage,
+        readProvisionedDashboard,
         page,
     }) => {
-        await panelEditPage.setVisualization('Grafmaid');
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        // 使用已設定為 Grafmaid 的 provisioned panel，避免 setVisualization
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '4' });
         const options = panelEditPage.getCustomOptions('Grafmaid');
         const contentInput = options.getTextInput('Mermaid Content');
         await contentInput.fill('this is not valid mermaid %%%');
-        // Alert 可能渲染在 panel locator scope 之外，使用 page scope
         await expect(page.getByText('Mermaid render error')).toBeVisible({ timeout: 15000 });
     });
 
     test('should update diagram when Mermaid Content option changes', async ({
-        panelEditPage,
+        gotoPanelEditPage,
+        readProvisionedDashboard,
     }) => {
-        await panelEditPage.setVisualization('Grafmaid');
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '4' });
         const options = panelEditPage.getCustomOptions('Grafmaid');
         const contentInput = options.getTextInput('Mermaid Content');
         await contentInput.fill('graph TD\n    X --> Y');
@@ -48,7 +52,6 @@ test.describe('Grafmaid Panel', () => {
         const panelEditPage = await gotoPanelEditPage({ dashboard, id: '26' });
         const svg = panelEditPage.panel.locator.locator(MERMAID_SVG_SELECTOR);
         await expect(svg).toBeVisible({ timeout: 10000 });
-        // 確認沒有出現錯誤
         await expect(panelEditPage.panel.locator.getByText('Mermaid render error')).not.toBeVisible();
     });
 });
