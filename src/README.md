@@ -103,7 +103,7 @@ This plugin bundles the following open-source software:
 | Package | License | Copyright |
 |---------|---------|-----------|
 | [mermaid](https://github.com/mermaid-js/mermaid) | MIT | © 2014-2022 Knut Sveidqvist |
-| [dagre-d3-es](https://github.com/tbo47/dagre-d3-es) | MIT | © 2013 Chris Pettitt |
+| [dagre-d3-es](https://github.com/tbo47/dagre-es) | MIT | © 2013 Chris Pettitt |
 | [dayjs](https://github.com/iamkun/dayjs) | MIT | © 2018-present iamkun |
 | [lodash-es](https://github.com/lodash/lodash) | MIT | © OpenJS Foundation |
 | [marked](https://github.com/markedjs/marked) | MIT | © 2018+ MarkedJS |
