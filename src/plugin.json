@@ -19,7 +19,13 @@
       { "name": "License", "url": "https://github.com/neildeng/grafana-grafmaid/blob/main/LICENSE" },
       { "name": "Issues", "url": "https://github.com/neildeng/grafana-grafmaid/issues" }
     ],
-    "screenshots": [],
+    "screenshots": [
+      { "name": "Basic diagrams - Flowchart, Sequence, State", "path": "img/basic-graph-1.png" },
+      { "name": "Advanced diagrams - Class, Journey, ER, Quadrant, Pie", "path": "img/basic-graph-2.png" },
+      { "name": "Git Graph, C4 Component, Packet", "path": "img/basic-graph-3.png" },
+      { "name": "Dashboard Variables integration", "path": "img/variables.png" },
+      { "name": "Data Queries with threshold coloring", "path": "img/queries.png" }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

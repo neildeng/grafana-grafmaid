@@ -111,6 +111,14 @@ graph TD
 | Packet | `packet` | 封包圖 |
 | Radar | `radar-beta` | 雷達圖 |
 
+#### 截圖
+
+![Flowchart, Sequence, State diagrams](../src/img/basic-graph-1.png)
+
+![Class, Journey, ER, Quadrant, Pie diagrams](../src/img/basic-graph-2.png)
+
+![Git Graph, C4 Component, Packet diagrams](../src/img/basic-graph-3.png)
+
 ### 2. Dashboard Variables 置換
 
 支援 Grafana 的 [Dashboard Variables](https://grafana.com/docs/grafana/latest/dashboards/variables/)，在 Mermaid Content 中使用 `$varName` 或 `${varName}` 語法引用變數。
@@ -133,6 +141,10 @@ graph TD
 - `${var:text}` — 文字格式
 - `${var:csv}` — 逗號分隔
 - `${var:pipe}` — Pipe 分隔
+
+#### 截圖
+
+![Dashboard Variables integration](../src/img/variables.png)
 
 ### 3. 多選變數展開 (`{{#each}}`)
 
@@ -289,6 +301,10 @@ graph TD
     title --> svc_${__index}
     {{/each}}
 ```
+
+#### 截圖
+
+![Data Queries with threshold coloring](../src/img/queries.png)
 
 ### 5. 特殊字元跳脫
 
