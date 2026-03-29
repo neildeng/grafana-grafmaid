@@ -86,10 +86,11 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                 const { svg } = await mermaid.render(mermaidId, resolvedContent);
                 // Defense-in-depth：即使 Mermaid strict mode 已消毒，
                 // 仍以 DOMPurify 二次過濾 SVG，防止 Mermaid 函式庫未來的迴歸漏洞
-                // Mermaid 使用 <foreignObject> 內嵌 HTML 來渲染文字，
-                // 因此需同時啟用 html + svg profile
+                // Defense-in-depth：封鎖 XSS 攻擊向量 (script/iframe/event handler)，
+                // 同時保留 Mermaid SVG 的完整結構 (foreignObject、style、HTML 文字等)
                 containerRef.current.innerHTML = DOMPurify.sanitize(svg, {
-                    USE_PROFILES: { html: true, svg: true, svgFilters: true },
+                    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'button'],
+                    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'onchange'],
                 });
                 setError(null);
 
