@@ -5,15 +5,20 @@
   "id": "neildengg-grafmaid-panel",
   "info": {
     "keywords": ["Grafmaid", "mermaidjs", "diagram", "flowchart"],
-    "description": "",
+    "description": "Render Mermaid.js diagrams in Grafana with live data from queries, dashboard variables, and threshold-based styling",
     "author": {
-      "name": "Neil Deng"
+      "name": "Neil Deng",
+      "url": "https://github.com/neildeng"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [],
+    "links": [
+      { "name": "Repository", "url": "https://github.com/neildeng/grafana-grafmaid" },
+      { "name": "License", "url": "https://github.com/neildeng/grafana-grafmaid/blob/main/LICENSE" },
+      { "name": "Issues", "url": "https://github.com/neildeng/grafana-grafmaid/issues" }
+    ],
     "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"

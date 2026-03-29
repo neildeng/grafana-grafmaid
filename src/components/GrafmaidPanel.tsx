@@ -47,7 +47,8 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
     const dataExpandedContent = expandDataBlocks(
         options.content ?? '',
         data.series,
-        options.escapeSpecialChars
+        options.escapeSpecialChars,
+        options.maxDataRows
     );
 
     // 1. 展開 {{#each}} 區塊 (多選變數展開)
@@ -82,6 +83,11 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                 await mermaid.parse(resolvedContent);
 
                 const { svg } = await mermaid.render(mermaidId, resolvedContent);
+                // 安全性由 mermaid.initialize({ securityLevel: 'strict' }) 保證：
+                // Mermaid strict mode 內部使用 DOMPurify 消毒 SVG 輸出，
+                // 移除 script / event handler / javascript: URL 等 XSS 向量。
+                // 不另加外部 DOMPurify 層，避免重複消毒破壞 SVG 結構
+                // (foreignObject 內嵌 HTML、style 元素等會被誤刪)。
                 containerRef.current.innerHTML = svg;
                 setError(null);
 
