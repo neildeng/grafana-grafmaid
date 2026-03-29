@@ -21,7 +21,7 @@
   "links": [],
   "panels": [
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -29,722 +29,327 @@
         "y": 0
       },
       "id": 25,
-      "panels": [
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 1
-          },
-          "id": 1,
-          "options": {
-            "content": "graph LR\n    A[Square Rect] -- Link text --> B((Circle))\n    A --> C(Round Rect)\n    B --> D{Rhombus}\n    C --> D",
-            "seriesCountSize": "sm",
-            "showSeriesCount": false,
-            "text": "Default value of text input option"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "grafana-testdata-datasource",
-                "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
-              },
-              "rawFrameContent": "[\n  {\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 10],\n      [1609462800000, \"B\", 20],\n      [1609466400000, \"C\", 15],\n      [1609470000000, \"D\", 25],\n      [1609473600000, \"E\", 30]\n    ]\n  },\n{\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 40],\n      [1609462800000, \"B\", 50],\n      [1609466400000, \"C\", 45],\n      [1609470000000, \"D\", 55],\n      [1609473600000, \"E\", 60]\n    ]\n  }\n]",
-              "refId": "A",
-              "scenarioId": "raw_frame"
-            }
-          ],
-          "title": "Basic Graph",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 34
-          },
-          "id": 4,
-          "options": {
-            "content": "flowchart TD\n    Start --> Stop"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "flowchart",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 34
-          },
-          "id": 2,
-          "options": {
-            "content": "sequenceDiagram\n    Alice->>John: Hello John, how are you?\n    John-->>Alice: Great!\n    Alice-)John: See you later!",
-            "seriesCountSize": "sm",
-            "showSeriesCount": false,
-            "text": "Default value of text input option"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "alias": "",
-              "datasource": {
-                "type": "grafana-testdata-datasource",
-                "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
-              },
-              "refId": "A",
-              "scenarioId": "no_data_points"
-            }
-          ],
-          "title": "sequenceDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 42
-          },
-          "id": 5,
-          "options": {
-            "content": "---\ntitle: Animal example\n---\nclassDiagram\n    note \"From Duck till Zebra\"\n    Animal <|-- Duck\n    note for Duck \"can fly<br>can swim<br>can dive<br>can help in debugging\"\n    Animal <|-- Fish\n    Animal <|-- Zebra\n    Animal : +int age\n    Animal : +String gender\n    Animal: +isMammal()\n    Animal: +mate()\n    class Duck{\n        +String beakColor\n        +swim()\n        +quack()\n    }\n    class Fish{\n        -int sizeInFeet\n        -canEat()\n    }\n    class Zebra{\n        +bool is_wild\n        +run()\n    }"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "classDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 42
-          },
-          "id": 3,
-          "options": {
-            "content": "---\ntitle: Simple sample\n---\nstateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]",
-            "seriesCountSize": "sm",
-            "showSeriesCount": false,
-            "text": "Default value of text input option"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "alias": "",
-              "datasource": {
-                "type": "grafana-testdata-datasource",
-                "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
-              },
-              "refId": "A",
-              "scenarioId": "no_data_points"
-            }
-          ],
-          "title": "stateDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 50
-          },
-          "id": 6,
-          "options": {
-            "content": "---\ntitle: Order example\n---\nerDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "erDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 50
-          },
-          "id": 8,
-          "options": {
-            "content": "journey\n    title My working day\n    section Go to work\n      Make tea: 5: Me\n      Go upstairs: 3: Me\n      Do work: 1: Me, Cat\n    section Go home\n      Go downstairs: 5: Me\n      Sit down: 5: Me"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "journey",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 15,
-            "w": 24,
-            "x": 0,
-            "y": 58
-          },
-          "id": 7,
-          "options": {
-            "content": "gantt\n    dateFormat  YYYY-MM-DD\n    title       Adding GANTT diagram functionality to mermaid\n    excludes    weekends\n    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week (\"sunday\") or \"weekends\", but not the word \"weekdays\".)\n\n    section A section\n    Completed task            :done,    des1, 2014-01-06,2014-01-08\n    Active task               :active,  des2, 2014-01-09, 3d\n    Future task               :         des3, after des2, 5d\n    Future task2              :         des4, after des3, 5d\n\n    section Critical tasks\n    Completed task in the critical line :crit, done, 2014-01-06,24h\n    Implement parser and jison          :crit, done, after des1, 2d\n    Create tests for parser             :crit, active, 3d\n    Future task in critical line        :crit, 5d\n    Create tests for renderer           :2d\n    Add to mermaid                      :until isadded\n    Functionality added                 :milestone, isadded, 2014-01-25, 0d\n\n    section Documentation\n    Describe gantt syntax               :active, a1, after des1, 3d\n    Add gantt diagram to demo page      :after a1  , 20h\n    Add another diagram to demo page    :doc1, after a1  , 48h\n\n    section Last section\n    Describe gantt syntax               :after doc1, 3d\n    Add gantt diagram to demo page      :20h\n    Add another diagram to demo page    :48h"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "gantt",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 0,
-            "y": 73
-          },
-          "id": 10,
-          "options": {
-            "content": "quadrantChart\n    title Reach and engagement of campaigns\n    x-axis Low Reach --> High Reach\n    y-axis Low Engagement --> High Engagement\n    quadrant-1 We should expand\n    quadrant-2 Need to promote\n    quadrant-3 Re-evaluate\n    quadrant-4 May be improved\n    Campaign A: [0.3, 0.6]\n    Campaign B: [0.45, 0.23]\n    Campaign C: [0.57, 0.69]\n    Campaign D: [0.78, 0.34]\n    Campaign E: [0.40, 0.34]\n    Campaign F: [0.35, 0.78]"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "quadrantChart",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 12,
-            "y": 73
-          },
-          "id": 9,
-          "options": {
-            "content": "---\nconfig:\n  pie:\n    textPosition: 0.5\n  themeVariables:\n    pieOuterStrokeWidth: \"5px\"\n---\npie showData\n    title Key elements in Product X\n    \"Calcium\" : 42.96\n    \"Potassium\" : 50.05\n    \"Magnesium\" : 10.01\n    \"Iron\" :  5"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "pie",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 0,
-            "y": 89
-          },
-          "id": 11,
-          "options": {
-            "content": "requirementDiagram\n\n    requirement test_req {\n    id: 1\n    text: the test text.\n    risk: high\n    verifymethod: test\n    }\n\n    element test_entity {\n    type: simulation\n    }\n\n    test_entity - satisfies -> test_req"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "requirementDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 12,
-            "y": 89
-          },
-          "id": 12,
-          "options": {
-            "content": "---\ntitle: Example Git diagram\n---\ngitGraph\n   commit\n   commit\n   branch develop\n   checkout develop\n   commit\n   commit\n   checkout main\n   merge develop\n   commit\n   commit"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "gitGraph",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 0,
-            "y": 105
-          },
-          "id": 13,
-          "options": {
-            "content": "C4Component\n    title Component diagram for Internet Banking System - API Application\n\n    Container(spa, \"Single Page Application\", \"javascript and angular\", \"Provides all the internet banking functionality to customers via their web browser.\")\n    Container(ma, \"Mobile App\", \"Xamarin\", \"Provides a limited subset to the internet banking functionality to customers via their mobile device.\")\n    ContainerDb(db, \"Database\", \"Relational Database Schema\", \"Stores user registration information, hashed authentication credentials, access logs, etc.\")\n    System_Ext(mbs, \"Mainframe Banking System\", \"Stores all of the core banking information about customers, accounts, transactions, etc.\")\n\n    Container_Boundary(api, \"API Application\") {\n        Component(sign, \"Sign In Controller\", \"MVC Rest Controller\", \"Allows users to sign in to the internet banking system\")\n        Component(accounts, \"Accounts Summary Controller\", \"MVC Rest Controller\", \"Provides customers with a summary of their bank accounts\")\n        Component(security, \"Security Component\", \"Spring Bean\", \"Provides functionality related to singing in, changing passwords, etc.\")\n        Component(mbsfacade, \"Mainframe Banking System Facade\", \"Spring Bean\", \"A facade onto the mainframe banking system.\")\n\n        Rel(sign, security, \"Uses\")\n        Rel(accounts, mbsfacade, \"Uses\")\n        Rel(security, db, \"Read & write to\", \"JDBC\")\n        Rel(mbsfacade, mbs, \"Uses\", \"XML/HTTPS\")\n    }\n\n    Rel_Back(spa, sign, \"Uses\", \"JSON/HTTPS\")\n    Rel(spa, accounts, \"Uses\", \"JSON/HTTPS\")\n\n    Rel(ma, sign, \"Uses\", \"JSON/HTTPS\")\n    Rel(ma, accounts, \"Uses\", \"JSON/HTTPS\")\n\n    UpdateRelStyle(spa, sign, $offsetY=\"-40\")\n    UpdateRelStyle(spa, accounts, $offsetX=\"40\", $offsetY=\"40\")\n\n    UpdateRelStyle(ma, sign, $offsetX=\"-90\", $offsetY=\"40\")\n    UpdateRelStyle(ma, accounts, $offsetY=\"-40\")\n\n        UpdateRelStyle(sign, security, $offsetX=\"-160\", $offsetY=\"10\")\n        UpdateRelStyle(accounts, mbsfacade, $offsetX=\"140\", $offsetY=\"10\")\n        UpdateRelStyle(security, db, $offsetY=\"-40\")\n        UpdateRelStyle(mbsfacade, mbs, $offsetY=\"-40\")"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "C4Component",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 16,
-            "w": 12,
-            "x": 12,
-            "y": 105
-          },
-          "id": 14,
-          "options": {
-            "content": "mindmap\n  root((mindmap))\n    Origins\n      Long history\n      ::icon(fa fa-book)\n      Popularisation\n        British popular psychology author Tony Buzan\n    Research\n      On effectiveness<br/>and features\n      On Automatic creation\n        Uses\n            Creative techniques\n            Strategic planning\n            Argument mapping\n    Tools\n      Pen and paper\n      Mermaid"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "mindmap",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 121
-          },
-          "id": 16,
-          "options": {
-            "content": "timeline\n    title History of Social Media Platform\n    2002 : LinkedIn\n    2004 : Facebook\n         : Google\n    2005 : YouTube\n    2006 : Twitter"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "timeline",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 121
-          },
-          "id": 15,
-          "options": {
-            "content": "graph TD\n    A[Christmas] -->|Get money| B(Go shopping)\n    B --> C{Let me think}\n    C -->|One| D[Laptop]\n    C -->|Two| E[iPhone]\n    C -->|Three| F[Car]"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "mindmap",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 131
-          },
-          "id": 17,
-          "options": {
-            "content": "packet\ntitle UDP Packet\n+16: \"Source Port\"\n+16: \"Destination Port\"\n32-47: \"Length\"\n48-63: \"Checksum\"\n64-95: \"Data (variable length)\""
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "packet",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 131
-          },
-          "id": 18,
-          "options": {
-            "content": "---\nconfig:\n  kanban:\n    ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'\n---\nkanban\n  Todo\n    [Create Documentation]\n    docs[Create Blog about the new diagram]\n  [In progress]\n    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]\n  id9[Ready for deploy]\n    id8[Design grammar]@{ assigned: 'knsv' }\n  id10[Ready for test]\n    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }\n    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }\n  id11[Done]\n    id5[define getData]\n    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}\n    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }\n\n  id12[Can't reproduce]\n    id3[Weird flickering in Firefox]"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "kanban",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 141
-          },
-          "id": 19,
-          "options": {
-            "content": "architecture-beta\n    group api(cloud)[API]\n\n    service db(database)[Database] in api\n    service disk1(disk)[Storage] in api\n    service disk2(disk)[Storage] in api\n    service server(server)[Server] in api\n\n    db:L -- R:server\n    disk1:T -- B:server\n    disk2:T -- B:db"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "architecture",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 141
-          },
-          "id": 20,
-          "options": {
-            "content": "---\ntitle: \"Grades\"\n---\nradar-beta\n  axis m[\"Math\"], s[\"Science\"], e[\"English\"]\n  axis h[\"History\"], g[\"Geography\"], a[\"Art\"]\n  curve a[\"Alice\"]{85, 90, 80, 70, 75, 90}\n  curve b[\"Bob\"]{70, 75, 85, 80, 90, 85}\n\n  max 100\n  min 0"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "radar",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 0,
-            "y": 151
-          },
-          "id": 23,
-          "options": {
-            "content": "treemap-beta\n\"Section 1\"\n    \"Leaf 1.1\": 12\n    \"Section 1.2\"\n      \"Leaf 1.2.1\": 12\n\"Section 2\"\n    \"Leaf 2.1\": 20\n    \"Leaf 2.2\": 25"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "treemap",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 12,
-            "x": 12,
-            "y": 151
-          },
-          "id": 22,
-          "options": {
-            "content": "venn-beta\n  title \"Team overlap\"\n  set Frontend\n  set Backend\n  union Frontend,Backend[\"APIs\"]"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "venn",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 36,
-            "w": 24,
-            "x": 0,
-            "y": 161
-          },
-          "id": 21,
-          "options": {
-            "content": "sequenceDiagram\n    participant web as Web Browser\n    participant blog as Blog Service\n    participant account as Account Service\n    participant mail as Mail Service\n    participant db as Storage\n\n    Note over web,db: The user must be logged in to submit blog posts\n    web->>+account: Logs in using credentials\n    account->>db: Query stored accounts\n    db->>account: Respond with query result\n\n    alt Credentials not found\n        account->>web: Invalid credentials\n    else Credentials found\n        account->>-web: Successfully logged in\n\n        Note over web,db: When the user is authenticated, they can now submit new posts\n        web->>+blog: Submit new post\n        blog->>db: Store post data\n\n        par Notifications\n            blog--)mail: Send mail to blog subscribers\n            blog--)db: Store in-site notifications\n        and Response\n            blog-->>-web: Successfully posted\n        end\n    end"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "sequenceDiagram",
-          "type": "neildengg-grafmaid-panel"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "trlxrdZVk"
-          },
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 24,
-            "x": 0,
-            "y": 197
-          },
-          "id": 24,
-          "options": {
-            "content": "gitGraph:\n    commit \"Ashish\"\n    branch newbranch\n    checkout newbranch\n    commit id:\"1111\"\n    commit tag:\"test\"\n    checkout main\n    commit type: HIGHLIGHT\n    commit\n    merge newbranch\n    commit\n    branch b2\n    commit"
-          },
-          "pluginVersion": "1.0.0",
-          "targets": [
-            {
-              "refId": "A"
-            }
-          ],
-          "title": "gitGraph",
-          "type": "neildengg-grafmaid-panel"
-        }
-      ],
+      "panels": [],
       "title": "Diagrams",
       "type": "row"
     },
     {
-      "collapsed": false,
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 1,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 1
       },
-      "id": 27,
-      "panels": [],
-      "title": "Variables",
-      "type": "row"
+      "id": 1,
+      "options": {
+        "content": "graph LR\n    A[Square Rect] -- Link text --> B((Circle))\n    A --> C(Round Rect)\n    B --> D{Rhombus}\n    C --> D",
+        "escapeSpecialChars": true,
+        "seriesCountSize": "sm",
+        "showSeriesCount": false,
+        "text": "Default value of text input option"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
+          },
+          "rawFrameContent": "[\n  {\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 10],\n      [1609462800000, \"B\", 20],\n      [1609466400000, \"C\", 15],\n      [1609470000000, \"D\", 25],\n      [1609473600000, \"E\", 30]\n    ]\n  },\n{\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 40],\n      [1609462800000, \"B\", 50],\n      [1609466400000, \"C\", 45],\n      [1609470000000, \"D\", 55],\n      [1609473600000, \"E\", 60]\n    ]\n  }\n]",
+          "refId": "A",
+          "scenarioId": "raw_frame"
+        }
+      ],
+      "title": "Basic Graph",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 11
+      },
+      "id": 4,
+      "options": {
+        "content": "flowchart TD\n    Start --> Stop",
+        "escapeSpecialChars": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "flowchart",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 11
+      },
+      "id": 2,
+      "options": {
+        "content": "sequenceDiagram\n    Alice->>John: Hello John, how are you?\n    John-->>Alice: Great!\n    Alice-)John: See you later!",
+        "escapeSpecialChars": true,
+        "seriesCountSize": "sm",
+        "showSeriesCount": false,
+        "text": "Default value of text input option"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
+          },
+          "refId": "A",
+          "scenarioId": "no_data_points"
+        }
+      ],
+      "title": "sequenceDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "id": 5,
+      "options": {
+        "content": "---\ntitle: Animal example\n---\nclassDiagram\n    note \"From Duck till Zebra\"\n    Animal <|-- Duck\n    note for Duck \"can fly<br>can swim<br>can dive<br>can help in debugging\"\n    Animal <|-- Fish\n    Animal <|-- Zebra\n    Animal : +int age\n    Animal : +String gender\n    Animal: +isMammal()\n    Animal: +mate()\n    class Duck{\n        +String beakColor\n        +swim()\n        +quack()\n    }\n    class Fish{\n        -int sizeInFeet\n        -canEat()\n    }\n    class Zebra{\n        +bool is_wild\n        +run()\n    }",
+        "escapeSpecialChars": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "classDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 3,
+      "options": {
+        "content": "---\ntitle: Simple sample\n---\nstateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]",
+        "escapeSpecialChars": true,
+        "seriesCountSize": "sm",
+        "showSeriesCount": false,
+        "text": "Default value of text input option"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
+          },
+          "refId": "A",
+          "scenarioId": "no_data_points"
+        }
+      ],
+      "title": "stateDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 6,
+      "options": {
+        "content": "---\ntitle: Order example\n---\nerDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "erDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 8,
+      "options": {
+        "content": "journey\n    title My working day\n    section Go to work\n      Make tea: 5: Me\n      Go upstairs: 3: Me\n      Do work: 1: Me, Cat\n    section Go home\n      Go downstairs: 5: Me\n      Sit down: 5: Me"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "journey",
+      "type": "neildengg-grafmaid-panel"
     },
     {
       "datasource": {
@@ -759,7 +364,539 @@
         "h": 15,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 35
+      },
+      "id": 7,
+      "options": {
+        "content": "gantt\n    dateFormat  YYYY-MM-DD\n    title       Adding GANTT diagram functionality to mermaid\n    excludes    weekends\n    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week (\"sunday\") or \"weekends\", but not the word \"weekdays\".)\n\n    section A section\n    Completed task            :done,    des1, 2014-01-06,2014-01-08\n    Active task               :active,  des2, 2014-01-09, 3d\n    Future task               :         des3, after des2, 5d\n    Future task2              :         des4, after des3, 5d\n\n    section Critical tasks\n    Completed task in the critical line :crit, done, 2014-01-06,24h\n    Implement parser and jison          :crit, done, after des1, 2d\n    Create tests for parser             :crit, active, 3d\n    Future task in critical line        :crit, 5d\n    Create tests for renderer           :2d\n    Add to mermaid                      :until isadded\n    Functionality added                 :milestone, isadded, 2014-01-25, 0d\n\n    section Documentation\n    Describe gantt syntax               :active, a1, after des1, 3d\n    Add gantt diagram to demo page      :after a1  , 20h\n    Add another diagram to demo page    :doc1, after a1  , 48h\n\n    section Last section\n    Describe gantt syntax               :after doc1, 3d\n    Add gantt diagram to demo page      :20h\n    Add another diagram to demo page    :48h"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "gantt",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 0,
+        "y": 50
+      },
+      "id": 10,
+      "options": {
+        "content": "quadrantChart\n    title Reach and engagement of campaigns\n    x-axis Low Reach --> High Reach\n    y-axis Low Engagement --> High Engagement\n    quadrant-1 We should expand\n    quadrant-2 Need to promote\n    quadrant-3 Re-evaluate\n    quadrant-4 May be improved\n    Campaign A: [0.3, 0.6]\n    Campaign B: [0.45, 0.23]\n    Campaign C: [0.57, 0.69]\n    Campaign D: [0.78, 0.34]\n    Campaign E: [0.40, 0.34]\n    Campaign F: [0.35, 0.78]"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "quadrantChart",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 50
+      },
+      "id": 9,
+      "options": {
+        "content": "---\nconfig:\n  pie:\n    textPosition: 0.5\n  themeVariables:\n    pieOuterStrokeWidth: \"5px\"\n---\npie showData\n    title Key elements in Product X\n    \"Calcium\" : 42.96\n    \"Potassium\" : 50.05\n    \"Magnesium\" : 10.01\n    \"Iron\" :  5"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "pie",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "id": 11,
+      "options": {
+        "content": "requirementDiagram\n\n    requirement test_req {\n    id: 1\n    text: the test text.\n    risk: high\n    verifymethod: test\n    }\n\n    element test_entity {\n    type: simulation\n    }\n\n    test_entity - satisfies -> test_req"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "requirementDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "id": 12,
+      "options": {
+        "content": "---\ntitle: Example Git diagram\n---\ngitGraph\n   commit\n   commit\n   branch develop\n   checkout develop\n   commit\n   commit\n   checkout main\n   merge develop\n   commit\n   commit"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "gitGraph",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 0,
+        "y": 82
+      },
+      "id": 13,
+      "options": {
+        "content": "C4Component\n    title Component diagram for Internet Banking System - API Application\n\n    Container(spa, \"Single Page Application\", \"javascript and angular\", \"Provides all the internet banking functionality to customers via their web browser.\")\n    Container(ma, \"Mobile App\", \"Xamarin\", \"Provides a limited subset to the internet banking functionality to customers via their mobile device.\")\n    ContainerDb(db, \"Database\", \"Relational Database Schema\", \"Stores user registration information, hashed authentication credentials, access logs, etc.\")\n    System_Ext(mbs, \"Mainframe Banking System\", \"Stores all of the core banking information about customers, accounts, transactions, etc.\")\n\n    Container_Boundary(api, \"API Application\") {\n        Component(sign, \"Sign In Controller\", \"MVC Rest Controller\", \"Allows users to sign in to the internet banking system\")\n        Component(accounts, \"Accounts Summary Controller\", \"MVC Rest Controller\", \"Provides customers with a summary of their bank accounts\")\n        Component(security, \"Security Component\", \"Spring Bean\", \"Provides functionality related to singing in, changing passwords, etc.\")\n        Component(mbsfacade, \"Mainframe Banking System Facade\", \"Spring Bean\", \"A facade onto the mainframe banking system.\")\n\n        Rel(sign, security, \"Uses\")\n        Rel(accounts, mbsfacade, \"Uses\")\n        Rel(security, db, \"Read & write to\", \"JDBC\")\n        Rel(mbsfacade, mbs, \"Uses\", \"XML/HTTPS\")\n    }\n\n    Rel_Back(spa, sign, \"Uses\", \"JSON/HTTPS\")\n    Rel(spa, accounts, \"Uses\", \"JSON/HTTPS\")\n\n    Rel(ma, sign, \"Uses\", \"JSON/HTTPS\")\n    Rel(ma, accounts, \"Uses\", \"JSON/HTTPS\")\n\n    UpdateRelStyle(spa, sign, $offsetY=\"-40\")\n    UpdateRelStyle(spa, accounts, $offsetX=\"40\", $offsetY=\"40\")\n\n    UpdateRelStyle(ma, sign, $offsetX=\"-90\", $offsetY=\"40\")\n    UpdateRelStyle(ma, accounts, $offsetY=\"-40\")\n\n        UpdateRelStyle(sign, security, $offsetX=\"-160\", $offsetY=\"10\")\n        UpdateRelStyle(accounts, mbsfacade, $offsetX=\"140\", $offsetY=\"10\")\n        UpdateRelStyle(security, db, $offsetY=\"-40\")\n        UpdateRelStyle(mbsfacade, mbs, $offsetY=\"-40\")"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "C4Component",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 82
+      },
+      "id": 14,
+      "options": {
+        "content": "mindmap\n  root((mindmap))\n    Origins\n      Long history\n      ::icon(fa fa-book)\n      Popularisation\n        British popular psychology author Tony Buzan\n    Research\n      On effectiveness<br/>and features\n      On Automatic creation\n        Uses\n            Creative techniques\n            Strategic planning\n            Argument mapping\n    Tools\n      Pen and paper\n      Mermaid"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "mindmap",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 98
+      },
+      "id": 16,
+      "options": {
+        "content": "timeline\n    title History of Social Media Platform\n    2002 : LinkedIn\n    2004 : Facebook\n         : Google\n    2005 : YouTube\n    2006 : Twitter"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "timeline",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 98
+      },
+      "id": 15,
+      "options": {
+        "content": "graph TD\n    A[Christmas] -->|Get money| B(Go shopping)\n    B --> C{Let me think}\n    C -->|One| D[Laptop]\n    C -->|Two| E[iPhone]\n    C -->|Three| F[Car]"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "mindmap",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 108
+      },
+      "id": 17,
+      "options": {
+        "content": "packet\ntitle UDP Packet\n+16: \"Source Port\"\n+16: \"Destination Port\"\n32-47: \"Length\"\n48-63: \"Checksum\"\n64-95: \"Data (variable length)\""
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "packet",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 108
+      },
+      "id": 18,
+      "options": {
+        "content": "---\nconfig:\n  kanban:\n    ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'\n---\nkanban\n  Todo\n    [Create Documentation]\n    docs[Create Blog about the new diagram]\n  [In progress]\n    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]\n  id9[Ready for deploy]\n    id8[Design grammar]@{ assigned: 'knsv' }\n  id10[Ready for test]\n    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }\n    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }\n  id11[Done]\n    id5[define getData]\n    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}\n    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }\n\n  id12[Can't reproduce]\n    id3[Weird flickering in Firefox]"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "kanban",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 118
+      },
+      "id": 19,
+      "options": {
+        "content": "architecture-beta\n    group api(cloud)[API]\n\n    service db(database)[Database] in api\n    service disk1(disk)[Storage] in api\n    service disk2(disk)[Storage] in api\n    service server(server)[Server] in api\n\n    db:L -- R:server\n    disk1:T -- B:server\n    disk2:T -- B:db"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "architecture",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 118
+      },
+      "id": 20,
+      "options": {
+        "content": "---\ntitle: \"Grades\"\n---\nradar-beta\n  axis m[\"Math\"], s[\"Science\"], e[\"English\"]\n  axis h[\"History\"], g[\"Geography\"], a[\"Art\"]\n  curve a[\"Alice\"]{85, 90, 80, 70, 75, 90}\n  curve b[\"Bob\"]{70, 75, 85, 80, 90, 85}\n\n  max 100\n  min 0"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "radar",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 128
+      },
+      "id": 23,
+      "options": {
+        "content": "treemap-beta\n\"Section 1\"\n    \"Leaf 1.1\": 12\n    \"Section 1.2\"\n      \"Leaf 1.2.1\": 12\n\"Section 2\"\n    \"Leaf 2.1\": 20\n    \"Leaf 2.2\": 25"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "treemap",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 128
+      },
+      "id": 22,
+      "options": {
+        "content": "venn-beta\n  title \"Team overlap\"\n  set Frontend\n  set Backend\n  union Frontend,Backend[\"APIs\"]"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "venn",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 36,
+        "w": 24,
+        "x": 0,
+        "y": 138
+      },
+      "id": 21,
+      "options": {
+        "content": "sequenceDiagram\n    participant web as Web Browser\n    participant blog as Blog Service\n    participant account as Account Service\n    participant mail as Mail Service\n    participant db as Storage\n\n    Note over web,db: The user must be logged in to submit blog posts\n    web->>+account: Logs in using credentials\n    account->>db: Query stored accounts\n    db->>account: Respond with query result\n\n    alt Credentials not found\n        account->>web: Invalid credentials\n    else Credentials found\n        account->>-web: Successfully logged in\n\n        Note over web,db: When the user is authenticated, they can now submit new posts\n        web->>+blog: Submit new post\n        blog->>db: Store post data\n\n        par Notifications\n            blog--)mail: Send mail to blog subscribers\n            blog--)db: Store in-site notifications\n        and Response\n            blog-->>-web: Successfully posted\n        end\n    end"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "sequenceDiagram",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 174
+      },
+      "id": 24,
+      "options": {
+        "content": "gitGraph:\n    commit \"Ashish\"\n    branch newbranch\n    checkout newbranch\n    commit id:\"1111\"\n    commit tag:\"test\"\n    checkout main\n    commit type: HIGHLIGHT\n    commit\n    merge newbranch\n    commit\n    branch b2\n    commit"
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "refId": "A"
+        }
+      ],
+      "title": "gitGraph",
+      "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 185
+      },
+      "id": 27,
+      "panels": [],
+      "title": "Variables",
+      "type": "row"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 9,
+        "x": 0,
+        "y": 186
+      },
+      "id": 30,
+      "options": {
+        "code": {
+          "language": "markdown",
+          "showLineNumbers": true,
+          "showMiniMap": false
+        },
+        "content": "graph LR\n    A[Christmas] -->|Get money| B(Go shopping)\n    B --> C{Let me think}\n    C -->|One| D[Laptop]\n    C -->|Two| E[iPhone]\n    C -->|Other| F[$gift]\n    C -->|or....| H[$gifts]\n    C ---> |bad| I[$bad_gifts]\n    $choose --> J[Pick it]",
+        "mode": "code"
+      },
+      "pluginVersion": "12.4.0",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 15,
+        "x": 9,
+        "y": 186
       },
       "id": 26,
       "options": {
@@ -774,18 +911,117 @@
       ],
       "title": "Replace Variables ",
       "type": "neildengg-grafmaid-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 200
+      },
+      "id": 28,
+      "panels": [],
+      "title": "Queries",
+      "type": "row"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 201
+      },
+      "id": 31,
+      "options": {
+        "code": {
+          "language": "markdown",
+          "showLineNumbers": true,
+          "showMiniMap": false
+        },
+        "content": "graph LR\n  A[\"Server A\" ] --> B[\"CPU: ${__data.fields.CPU_A_USAGE:display}\"];\n  C[${__data.CPU_A.labels.server}] --> D[\"CPU: ${__data.CPU_A:display}\"];\n  style B fill:${__data.fields.CPU_A_USAGE:color},color:#fff;\n  style D fill:${__data.CPU_A:color},color:#fff;",
+        "mode": "code"
+      },
+      "pluginVersion": "12.4.0",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-red",
+            "mode": "thresholds"
+          },
+          "decimals": 3,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 201
+      },
+      "id": 29,
+      "options": {
+        "content": "graph LR\n  A[\"Server A\" ] --> B[\"CPU: ${__data.fields.CPU_A_USAGE:display}\"];\n  C[${__data.CPU_A.labels.server}] --> D[\"CPU: ${__data.CPU_A:display}\"];\n  style B fill:${__data.fields.CPU_A_USAGE:color},color:#fff;\n  style D fill:${__data.CPU_A:color},color:#fff;",
+        "escapeSpecialChars": true
+      },
+      "pluginVersion": "1.0.0",
+      "targets": [
+        {
+          "alias": "CPU_A_USAGE",
+          "labels": "server=\"Apache HTTP Server\", env=\"PROD\"",
+          "max": 100,
+          "min": 0,
+          "refId": "CPU_A",
+          "scenarioId": "random_walk"
+        }
+      ],
+      "title": "Data fields display with color",
+      "type": "neildengg-grafmaid-panel"
     }
   ],
   "preload": false,
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "NS2",
-          "value": "NS2"
+          "text": "PS5",
+          "value": "PS5"
         },
         "label": "Gift",
         "name": "gift",
@@ -812,8 +1048,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": ["[LEGO]", "[NS2]", "[PS5]"],
-          "value": ["[LEGO]", "[NS2]", "[PS5]"]
+          "text": ["[LEGO]", "[PS5]"],
+          "value": ["[LEGO]", "[PS5]"]
         },
         "includeAll": false,
         "label": "BadGifts",
@@ -841,13 +1077,13 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Provisioned grafmaid dashboard",
   "uid": "a538aeff-5a8a-42a5-901c-938d896fdd6f",
-  "version": 13,
+  "version": 24,
   "weekStart": ""
 }
