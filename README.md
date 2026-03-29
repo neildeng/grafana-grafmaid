@@ -9,20 +9,48 @@
 </p>
 
 <p>
-  A Grafana panel plugin that renders <a href="https://mermaid.js.org/">Mermaid.js</a> diagrams with live metric values injected from queries — turning static architecture diagrams into dynamic, data-driven visuals.
+  A Grafana panel plugin that renders <a href="https://mermaid.js.org/">Mermaid.js</a> diagrams with live data from queries, dashboard variables, and threshold-based styling — turning static architecture diagrams into dynamic, data-driven visuals.
 </p>
 
 <p>
   🌐 <a href="README.zh-TW.md">繁體中文</a>
 </p>
 
+[![License](https://img.shields.io/github/license/neildeng/grafana-grafmaid)](https://github.com/neildeng/grafana-grafmaid/blob/main/LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/neildeng/grafana-grafmaid)](https://github.com/neildeng/grafana-grafmaid/releases)
+
+## Screenshots
+
+| Basic diagrams | Variables | Data Queries |
+|---|---|---|
+| ![Basic](src/img/basic-graph-1.png) | ![Variables](src/img/variables.png) | ![Queries](src/img/queries.png) |
+
 ## Features
 
-- Render Mermaid.js diagrams (flowcharts, sequence diagrams, etc.) directly in Grafana panels
-- Inject live metric values from data source queries into diagram nodes and labels
-- Automatically update diagrams as data refreshes
+- **All Mermaid diagram types** — Flowchart, Sequence, Class, State, ER, Gantt, Pie, Mindmap, Timeline, Git Graph, C4, and more
+- **Dashboard Variables** — `$variable` substitution and `{{#each var}}` multi-value expansion
+- **Data Queries** — Inject live metric values via `${__data.CPU_A:display}` or `${__data.fields.X}` syntax
+- **Labels** — Access metric labels with `${__data.CPU_A.labels.http_status}`
+- **Field Config** — Units, Thresholds, Value Mappings, Color scheme, Decimals
+- **Threshold coloring** — Color nodes dynamically with `${__data.CPU_A:color}`
+- **Special character escaping** — Auto-escape `[ ] { } | > <` in variable values
+- **Theme-aware** — Auto-switches Mermaid theme with Grafana dark/light mode
+- **Responsive** — SVG auto-scales with panel dimensions
 
-## Getting Started
+## Quick Start
+
+```
+graph LR
+    A["${__data.CPU_A.labels.server}"] --> B["CPU: ${__data.CPU_A:display}"]
+    style B fill:${__data.CPU_A:color},color:#fff
+```
+
+## Documentation
+
+- **User guide**: [docs/README.md](docs/README.md) ([繁體中文](docs/README.zh-TW.md))
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+
+## Getting Started (Development)
 
 ### Prerequisites
 
@@ -75,6 +103,11 @@ npm run lint
 npm run lint:fix
 ```
 
+## Contributing
+
+- **Report bugs**: [GitHub Issues](https://github.com/neildeng/grafana-grafmaid/issues)
+- **Feature requests**: [GitHub Issues](https://github.com/neildeng/grafana-grafmaid/issues)
+
 ## License
 
-Apache-2.0
+[Apache License 2.0](LICENSE)

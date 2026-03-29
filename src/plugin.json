@@ -4,17 +4,28 @@
   "name": "Grafmaid",
   "id": "neildengg-grafmaid-panel",
   "info": {
-    "keywords": ["panel"],
-    "description": "",
+    "keywords": ["Grafmaid", "mermaidjs", "diagram", "flowchart"],
+    "description": "Render Mermaid.js diagrams in Grafana with live data from queries, dashboard variables, and threshold-based styling",
     "author": {
-      "name": "Neildengg"
+      "name": "Neil Deng",
+      "url": "https://github.com/neildeng"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [],
-    "screenshots": [],
+    "links": [
+      { "name": "Repository", "url": "https://github.com/neildeng/grafana-grafmaid" },
+      { "name": "License", "url": "https://github.com/neildeng/grafana-grafmaid/blob/main/LICENSE" },
+      { "name": "Issues", "url": "https://github.com/neildeng/grafana-grafmaid/issues" }
+    ],
+    "screenshots": [
+      { "name": "Basic diagrams - Flowchart, Sequence, State", "path": "img/basic-graph-1.png" },
+      { "name": "Advanced diagrams - Class, Journey, ER, Quadrant, Pie", "path": "img/basic-graph-2.png" },
+      { "name": "Git Graph, C4 Component, Packet", "path": "img/basic-graph-3.png" },
+      { "name": "Dashboard Variables integration", "path": "img/variables.png" },
+      { "name": "Data Queries with threshold coloring", "path": "img/queries.png" }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

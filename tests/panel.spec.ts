@@ -1,35 +1,60 @@
 import { test, expect } from '@grafana/plugin-e2e';
 
-test('should display "No data" in case panel data is empty', async ({
-  gotoPanelEditPage,
-  readProvisionedDashboard,
-}) => {
-  const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
-  const panelEditPage = await gotoPanelEditPage({ dashboard, id: '2' });
-  await expect(panelEditPage.panel.locator).toContainText('No data');
-});
+// Mermaid 渲染的 SVG 帶有 role="graphics-document document"，
+// 以此區分面板 header 的 icon SVG
+const MERMAID_SVG_SELECTOR = 'svg[role^="graphics-document"]';
 
-test('should display circle when data is passed to the panel', async ({
-  panelEditPage,
-  readProvisionedDataSource,
-  page,
-}) => {
-  const ds = await readProvisionedDataSource({ fileName: 'datasources.yml' });
-  await panelEditPage.datasource.set(ds.name);
-  await panelEditPage.setVisualization('Grafmaid');
-  await expect(page.getByTestId('simple-panel-circle')).toBeVisible();
-});
+test.describe('Grafmaid Panel', () => {
+    test('should render Mermaid diagram as SVG', async ({
+        gotoPanelEditPage,
+        readProvisionedDashboard,
+    }) => {
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        // id 4: flowchart TD\n    Start --> Stop
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '4' });
+        const svg = panelEditPage.panel.locator.locator(MERMAID_SVG_SELECTOR);
+        await expect(svg).toBeVisible({ timeout: 10000 });
+    });
 
-test('should display series counter when "Show series counter" option is enabled', async ({
-  gotoPanelEditPage,
-  readProvisionedDashboard,
-  page,
-}) => {
-  const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
-  const panelEditPage = await gotoPanelEditPage({ dashboard, id: '1' });
-  const options = panelEditPage.getCustomOptions('Grafmaid');
-  const showSeriesCounter = options.getSwitch('Show series counter');
+    test('should display error alert when Mermaid syntax is invalid', async ({
+        gotoPanelEditPage,
+        readProvisionedDashboard,
+        page,
+    }) => {
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        // 使用已設定為 Grafmaid 的 provisioned panel，避免 setVisualization
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '4' });
+        const options = panelEditPage.getCustomOptions('Grafmaid');
+        const contentInput = options.getTextInput('Mermaid Content');
+        await contentInput.fill('this is not valid mermaid %%%');
+        // textarea 需要 blur 才會觸發 panel option 更新
+        await contentInput.blur();
+        await expect(page.getByText('Mermaid render error')).toBeVisible({ timeout: 15000 });
+    });
 
-  await showSeriesCounter.check();
-  await expect(page.getByTestId('simple-panel-series-counter')).toBeVisible();
+    test('should update diagram when Mermaid Content option changes', async ({
+        gotoPanelEditPage,
+        readProvisionedDashboard,
+    }) => {
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '4' });
+        const options = panelEditPage.getCustomOptions('Grafmaid');
+        const contentInput = options.getTextInput('Mermaid Content');
+        await contentInput.fill('graph TD\n    X --> Y');
+        await contentInput.blur();
+        const svg = panelEditPage.panel.locator.locator(MERMAID_SVG_SELECTOR);
+        await expect(svg).toBeVisible({ timeout: 15000 });
+    });
+
+    test('should render diagram with dashboard variables replaced', async ({
+        gotoPanelEditPage,
+        readProvisionedDashboard,
+    }) => {
+        const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+        // id 26: 使用 $gift, $gifts, $choose 變數的面板
+        const panelEditPage = await gotoPanelEditPage({ dashboard, id: '26' });
+        const svg = panelEditPage.panel.locator.locator(MERMAID_SVG_SELECTOR);
+        await expect(svg).toBeVisible({ timeout: 10000 });
+        await expect(panelEditPage.panel.locator.getByText('Mermaid render error')).not.toBeVisible();
+    });
 });

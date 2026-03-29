@@ -1,40 +1,60 @@
-import { PanelPlugin } from '@grafana/data';
-import { SimpleOptions } from './types';
-import { SimplePanel } from './components/SimplePanel';
+import { FieldColorModeId, FieldConfigProperty, PanelPlugin, ThresholdsMode } from '@grafana/data';
+import { GrafmaidOptions } from './types';
+import { GrafmaidPanel } from './components/GrafmaidPanel';
 
-export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions((builder) => {
-  return builder
-    .addTextInput({
-      path: 'text',
-      name: 'Simple text option',
-      description: 'Description of panel option',
-      defaultValue: 'Default value of text input option',
+const DEFAULT_CONTENT = `graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]`;
+
+export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel)
+    .useFieldConfig({
+        standardOptions: {
+            [FieldConfigProperty.Color]: {
+                defaultValue: {
+                    mode: FieldColorModeId.Thresholds,
+                },
+            },
+            [FieldConfigProperty.Thresholds]: {
+                defaultValue: {
+                    mode: ThresholdsMode.Absolute,
+                    steps: [
+                        { value: -Infinity, color: 'green' },
+                        { value: 80, color: 'red' },
+                    ],
+                },
+            },
+        },
     })
-    .addBooleanSwitch({
-      path: 'showSeriesCount',
-      name: 'Show series counter',
-      defaultValue: false,
-    })
-    .addRadio({
-      path: 'seriesCountSize',
-      defaultValue: 'sm',
-      name: 'Series counter size',
-      settings: {
-        options: [
-          {
-            value: 'sm',
-            label: 'Small',
-          },
-          {
-            value: 'md',
-            label: 'Medium',
-          },
-          {
-            value: 'lg',
-            label: 'Large',
-          },
-        ],
-      },
-      showIf: (config) => config.showSeriesCount,
-    });
+    .setPanelOptions((builder) => {
+    return builder
+        .addTextInput({
+            path: 'content',
+            name: 'Mermaid Content',
+            description:
+                'Enter Mermaid diagram definition. Supports $variable substitution, {{#each var}}...{{value}}...{{/each}} multi-value expansion, and {{#each data}}...${__data.fields.Name}...{{/each}} query result expansion.',
+            defaultValue: DEFAULT_CONTENT,
+            settings: {
+                useTextarea: true,
+                rows: 10,
+            },
+        })
+        .addBooleanSwitch({
+            path: 'escapeSpecialChars',
+            name: 'Escape special characters',
+            description: 'Automatically escape Mermaid special characters ([ ] { } | > < etc.) in variable values to prevent breaking diagram syntax.',
+            defaultValue: true,
+        })
+        .addNumberInput({
+            path: 'maxDataRows',
+            name: 'Max data rows',
+            description: 'Maximum number of rows to expand in {{#each data}} blocks. Set to 0 for unlimited. Large values may impact rendering performance.',
+            defaultValue: 100,
+            settings: {
+                min: 0,
+                integer: true,
+            },
+        });
 });
