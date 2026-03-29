@@ -27,6 +27,8 @@ test.describe('Grafmaid Panel', () => {
         const options = panelEditPage.getCustomOptions('Grafmaid');
         const contentInput = options.getTextInput('Mermaid Content');
         await contentInput.fill('this is not valid mermaid %%%');
+        // textarea 需要 blur 才會觸發 panel option 更新
+        await contentInput.blur();
         await expect(page.getByText('Mermaid render error')).toBeVisible({ timeout: 15000 });
     });
 
@@ -39,6 +41,7 @@ test.describe('Grafmaid Panel', () => {
         const options = panelEditPage.getCustomOptions('Grafmaid');
         const contentInput = options.getTextInput('Mermaid Content');
         await contentInput.fill('graph TD\n    X --> Y');
+        await contentInput.blur();
         const svg = panelEditPage.panel.locator.locator(MERMAID_SVG_SELECTOR);
         await expect(svg).toBeVisible({ timeout: 15000 });
     });
