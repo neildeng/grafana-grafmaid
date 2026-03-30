@@ -98,6 +98,27 @@ describe('GrafmaidPanel', () => {
         expect(mockedMermaid.render).not.toHaveBeenCalled();
     });
 
+    it('content 變成空字串時應清除先前渲染的 SVG', async () => {
+        const svgOutput = '<svg><text>rendered</text></svg>';
+        mockedMermaid.render.mockResolvedValue({ svg: svgOutput, bindFunctions: jest.fn() });
+
+        const initialProps = createDefaultProps();
+        const { container, rerender } = render(<GrafmaidPanel {...initialProps} />);
+
+        await waitFor(() => {
+            expect(container.querySelector('svg')).toBeInTheDocument();
+        });
+
+        const emptyProps = createDefaultProps({
+            options: { content: '', escapeSpecialChars: true },
+        });
+        rerender(<GrafmaidPanel {...emptyProps} />);
+
+        await waitFor(() => {
+            expect(container.querySelector('svg')).not.toBeInTheDocument();
+        });
+    });
+
     it('應呼叫 replaceVariables 進行變數置換', async () => {
         const replaceVariables = jest.fn((text: string) => text.replace(/\$service/g, 'web-api'));
         mockedMermaid.render.mockResolvedValue({ svg: '<svg></svg>', bindFunctions: jest.fn() });

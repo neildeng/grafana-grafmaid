@@ -74,6 +74,9 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
     useEffect(() => {
         const renderDiagram = async () => {
             if (!containerRef.current || !resolvedContent) {
+                if (containerRef.current) {
+                    containerRef.current.innerHTML = '';
+                }
                 setError(null);
                 return;
             }
