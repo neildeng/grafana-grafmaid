@@ -690,6 +690,157 @@ describe('expandDataBlocks', () => {
         });
     });
 
+    describe('跨 series 迭代 ({{#each series}})', () => {
+        it('應迭代所有 series 並存取各自的 labels', () => {
+            const makeFrame = (namespace: string) => {
+                const valueField = createField('Value', FieldType.number, [1]);
+                (valueField as any).labels = { namespace };
+                return createMockDataFrame([
+                    createField('Time', FieldType.time, [1000]),
+                    valueField,
+                ]);
+            };
+
+            const series = [makeFrame('airflow'), makeFrame('az-devops'), makeFrame('cert-manager')];
+
+            const content = [
+                'graph TD',
+                '    K8s[cluster]',
+                '    {{#each series}}',
+                '    ns_${__index}["${__data.labels.namespace}"]',
+                '    K8s --> ns_${__index}',
+                '    {{/each}}',
+            ].join('\n');
+
+            const result = expandDataBlocks(content, series, false);
+
+            expect(result).toContain('ns_0["airflow"]');
+            expect(result).toContain('ns_1["az-devops"]');
+            expect(result).toContain('ns_2["cert-manager"]');
+            expect(result).toContain('K8s --> ns_0');
+            expect(result).toContain('K8s --> ns_1');
+            expect(result).toContain('K8s --> ns_2');
+        });
+
+        it('應支援 ${__seriesCount}', () => {
+            const makeFrame = (name: string) =>
+                createMockDataFrame([createField('Name', FieldType.string, [name])]);
+
+            const series = [makeFrame('A'), makeFrame('B'), makeFrame('C')];
+
+            const content = '{{#each series}}\n${__index}/${__seriesCount}\n{{/each}}';
+            const result = expandDataBlocks(content, series, false);
+
+            expect(result).toContain('0/3');
+            expect(result).toContain('1/3');
+            expect(result).toContain('2/3');
+        });
+
+        it('應支援存取各 series 的欄位值 (取最後一列)', () => {
+            const frame0 = createMockDataFrame([
+                createField('Value', FieldType.number, [10, 20]),
+            ]);
+            const frame1 = createMockDataFrame([
+                createField('Value', FieldType.number, [30, 40]),
+            ]);
+
+            const content = '{{#each series}}\nval_${__data.fields.Value}\n{{/each}}';
+            const result = expandDataBlocks(content, [frame0, frame1], false);
+
+            expect(result).toContain('val_20');
+            expect(result).toContain('val_40');
+        });
+
+        it('應支援 :display 和 :color 修飾符', () => {
+            const frame = createMockDataFrame([
+                createField('Value', FieldType.number, [85], {
+                    display: (v: number) => ({ text: v.toFixed(1), suffix: '%', color: '#FF0000' }),
+                }),
+            ]);
+
+            const content = '{{#each series}}\n${__data.fields.Value:display} fill:${__data.fields.Value:color}\n{{/each}}';
+            const result = expandDataBlocks(content, [frame], false);
+
+            expect(result).toContain('85.0%');
+            expect(result).toContain('fill:#FF0000');
+        });
+
+        it('空 series 陣列應回傳空字串', () => {
+            const content = '{{#each series}}\n${__data.labels.namespace}\n{{/each}}';
+            const result = expandDataBlocks(content, [], false);
+
+            expect(result).toBe('');
+        });
+
+        it('無資料列的 series 應被跳過', () => {
+            const emptyFrame = createMockDataFrame([
+                createField('Value', FieldType.number, []),
+            ]);
+            const validFrame = createMockDataFrame([
+                createField('Value', FieldType.number, [42]),
+            ]);
+
+            const content = '{{#each series}}\nval_${__data.fields.Value}\n{{/each}}';
+            const result = expandDataBlocks(content, [emptyFrame, validFrame], false);
+
+            expect(result).toContain('val_42');
+            expect(result).not.toContain('val_undefined');
+        });
+
+        it('maxRows 應限制迭代的 series 數量', () => {
+            const makeFrame = (val: number) =>
+                createMockDataFrame([createField('Value', FieldType.number, [val])]);
+
+            const series = [makeFrame(1), makeFrame(2), makeFrame(3), makeFrame(4)];
+
+            const content = '{{#each series}}\n${__data.fields.Value}\n{{/each}}';
+            const result = expandDataBlocks(content, series, false, 2);
+
+            expect(result).toContain('1');
+            expect(result).toContain('2');
+            expect(result).not.toContain('\n3');
+            expect(result).not.toContain('\n4');
+        });
+
+        it('escapeValues 應跳脫 label 中的特殊字元', () => {
+            const valueField = createField('Value', FieldType.number, [1]);
+            (valueField as any).labels = { path: '/api[v1]' };
+            const frame = createMockDataFrame([valueField]);
+
+            const content = '{{#each series}}\n${__data.labels.path}\n{{/each}}';
+            const result = expandDataBlocks(content, [frame], true);
+
+            expect(result).toContain('#91;v1#93;');
+        });
+
+        it('{{#each series}} 與 {{#each data}} 可混用', () => {
+            const valueField = createField('Value', FieldType.number, [10]);
+            (valueField as any).labels = { env: 'prod' };
+            const frame0 = createMockDataFrame([
+                createField('Time', FieldType.time, [1000]),
+                valueField,
+            ]);
+            const frame1 = createMockDataFrame([
+                createField('Name', FieldType.string, ['DB', 'Cache']),
+            ]);
+
+            const content = [
+                '{{#each series}}',
+                '    env_${__index}["${__data.labels.env}"]',
+                '{{/each}}',
+                '{{#each data.1}}',
+                '    node_${__index}["${__data.fields.Name}"]',
+                '{{/each}}',
+            ].join('\n');
+
+            const result = expandDataBlocks(content, [frame0, frame1], false);
+
+            expect(result).toContain('env_0["prod"]');
+            expect(result).toContain('node_0["DB"]');
+            expect(result).toContain('node_1["Cache"]');
+        });
+    });
+
     describe('多個 data block', () => {
         it('應能處理同一內容中的多個 data block', () => {
             const frame0 = createMockDataFrame([
