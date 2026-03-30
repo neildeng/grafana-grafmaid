@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { FieldConfigSource, FieldType, LoadingState, PanelProps } from '@grafana/data';
 import { GrafmaidOptions } from 'types';
 import { GrafmaidPanel } from '../../../src/components/GrafmaidPanel';
@@ -60,6 +60,17 @@ function createDefaultProps(overrides?: Partial<PanelProps<GrafmaidOptions>>): P
         onChangeTimeRange: jest.fn(),
         ...overrides,
     };
+}
+
+function createDeferred<T>() {
+    let resolve!: (value: T) => void;
+    let reject!: (reason?: unknown) => void;
+    const promise = new Promise<T>((res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+
+    return { promise, resolve, reject };
 }
 
 describe('GrafmaidPanel', () => {
@@ -169,6 +180,44 @@ describe('GrafmaidPanel', () => {
 
         await waitFor(() => {
             expect(screen.queryByText('Mermaid render error')).not.toBeInTheDocument();
+        });
+    });
+
+    it('過期的 render 結果不應覆蓋較新的圖表', async () => {
+        const firstRender = createDeferred<{ svg: string; bindFunctions: jest.Mock }>();
+        const secondRender = createDeferred<{ svg: string; bindFunctions: jest.Mock }>();
+
+        mockedMermaid.render
+            .mockImplementationOnce(() => firstRender.promise)
+            .mockImplementationOnce(() => secondRender.promise);
+
+        const initialProps = createDefaultProps({
+            options: { content: 'graph TD\n    A --> B', escapeSpecialChars: true },
+        });
+        const { container, rerender } = render(<GrafmaidPanel {...initialProps} />);
+
+        const updatedProps = createDefaultProps({
+            options: { content: 'graph TD\n    X --> Y', escapeSpecialChars: true },
+        });
+        rerender(<GrafmaidPanel {...updatedProps} />);
+
+        await act(async () => {
+            secondRender.resolve({ svg: '<svg><text>new</text></svg>', bindFunctions: jest.fn() });
+            await secondRender.promise;
+        });
+
+        await waitFor(() => {
+            expect(container).toHaveTextContent('new');
+        });
+
+        await act(async () => {
+            firstRender.resolve({ svg: '<svg><text>old</text></svg>', bindFunctions: jest.fn() });
+            await firstRender.promise;
+        });
+
+        await waitFor(() => {
+            expect(container).toHaveTextContent('new');
+            expect(container).not.toHaveTextContent('old');
         });
     });
 
