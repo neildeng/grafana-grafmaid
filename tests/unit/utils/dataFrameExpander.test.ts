@@ -317,6 +317,36 @@ describe('expandDataBlocks', () => {
             expect(result).not.toContain('20');
         });
 
+        it('{{#each data.cpu-prod}} 應支援含連字號的 selector', () => {
+            const frameA = { ...createMockDataFrame([
+                createField('Value', FieldType.number, [10]),
+            ]), name: 'cpu-prod' };
+            const frameB = createMockDataFrame([
+                createField('Value', FieldType.number, [20]),
+            ]);
+
+            const content = '{{#each data.cpu-prod}}\n${__data.fields.Value}\n{{/each}}';
+            const result = expandDataBlocks(content, [frameB, frameA], false);
+
+            expect(result).toContain('10');
+            expect(result).not.toContain('20');
+        });
+
+        it('{{#each data["My Series"]}} 應支援含空格的 series name', () => {
+            const frameA = { ...createMockDataFrame([
+                createField('Value', FieldType.number, [10]),
+            ]), name: 'My Series' };
+            const frameB = createMockDataFrame([
+                createField('Value', FieldType.number, [20]),
+            ]);
+
+            const content = '{{#each data["My Series"]}}\n${__data.fields.Value}\n{{/each}}';
+            const result = expandDataBlocks(content, [frameB, frameA], false);
+
+            expect(result).toContain('10');
+            expect(result).not.toContain('20');
+        });
+
         it('單值模式：${__data.CPU_A.fields.Value} 應依 refId 取最後一列', () => {
             const frameA = { ...createMockDataFrame([
                 createField('Value', FieldType.number, [10, 42]),
@@ -373,6 +403,17 @@ describe('expandDataBlocks', () => {
 
             expect(result).toContain('CPU_A: 45');
             expect(result).toContain('CPU_B: 92');
+        });
+
+        it('單值模式：${__data["CPU Prod"].fields.Value} 應支援含空格的 series name', () => {
+            const frameA = { ...createMockDataFrame([
+                createField('Value', FieldType.number, [10, 42]),
+            ]), name: 'CPU Prod' };
+
+            const content = 'graph TD\n    A["${__data["CPU Prod"].fields.Value}"]';
+            const result = expandDataBlocks(content, [frameA], false);
+
+            expect(result).toContain('42');
         });
     });
 
