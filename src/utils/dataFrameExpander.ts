@@ -163,7 +163,7 @@ function getColorValue(field: Field, rowIndex: number): string {
 //
 // (?!fields\b)(?!labels\b) negative lookahead 確保 dot selector 不會誤匹配關鍵字
 const FIELD_PLACEHOLDER_PATTERN =
-    /\$\{(?:__data(?:\.(?!fields\b)(?!labels\b)([\w-]+)|\["([^"]+)"\])?(?:\.fields(?:\.([^:}"[\]]+?)|(?:\["([^"]+)"\])|(?:\[(\d+)\]))(?::(display|color))?|\.labels\.([\w]+)|(?::(display|color)))?|(__index|__rowCount))\}/g;
+    /\$\{(?:__data(?:\.(?!fields\b)(?!labels\b)([\w-]+)|\["([^"]+)"\])?(?:\.fields(?:\.([^:}"[\]]+?)|(?:\["([^"]+)"\])|(?:\[(\d+)\]))(?::(display|color))?|\.labels\.([\w]+)|(?::(display|color)))?|(__index|__rowCount|__seriesCount))\}/g;
 
 /**
  * 替換單一列的佔位符。
@@ -180,7 +180,9 @@ function replaceFieldPlaceholders(
     rowIndex: number,
     rowCount: number,
     escapeValues: boolean,
-    series: DataFrame[]
+    series: DataFrame[],
+    indexOverride?: number,
+    seriesCount?: number
 ): string {
     return template.replace(
         FIELD_PLACEHOLDER_PATTERN,
@@ -199,10 +201,13 @@ function replaceFieldPlaceholders(
             const seriesSelector = seriesSelectorDot ?? seriesSelectorBracket;
 
             if (builtin === '__index') {
-                return String(rowIndex);
+                return String(indexOverride ?? rowIndex);
             }
             if (builtin === '__rowCount') {
                 return String(rowCount);
+            }
+            if (builtin === '__seriesCount') {
+                return seriesCount !== undefined ? String(seriesCount) : _match;
             }
 
             // 決定使用哪個 frame 和 fieldMap
@@ -316,10 +321,37 @@ export function expandDataBlocks(
     escapeValues: boolean,
     maxRows = 0
 ): string {
+    // Phase 0：展開 {{#each series}} 區塊 (跨 series 迭代)
+    const seriesBlockPattern = /\{\{#each\s+series\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
+
+    let result = content.replace(seriesBlockPattern, (_fullMatch, template: string) => {
+        if (series.length === 0) {
+            return '';
+        }
+
+        const count = maxRows > 0 ? Math.min(series.length, maxRows) : series.length;
+        const rows: string[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const frame = series[i];
+            if (frame.length === 0) {
+                continue;
+            }
+            const fieldMap = buildFieldMap(frame);
+            const lastRow = frame.length - 1;
+            rows.push(replaceFieldPlaceholders(
+                template, fieldMap, frame, lastRow, frame.length,
+                escapeValues, series, i, series.length
+            ));
+        }
+
+        return rows.join('\n');
+    });
+
     // Phase 1：展開 {{#each data}} / {{#each data.refId}} / {{#each data["Series Name"]}} 區塊
     const blockPattern = /\{\{#each\s+(data(?:\.(?:[\w-]+)|\["[^"]+"\])?)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
 
-    let result = content.replace(blockPattern, (_fullMatch, dataRef: string, template: string) => {
+    result = result.replace(blockPattern, (_fullMatch, dataRef: string, template: string) => {
         const selector = parseSeriesSelector(dataRef);
         const frame = resolveSeries(series, selector);
 
