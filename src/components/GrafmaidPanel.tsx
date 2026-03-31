@@ -72,6 +72,8 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
 
     // 4. 語法預驗證 + 渲染 Mermaid 圖表
     useEffect(() => {
+        let cancelled = false;
+
         const renderDiagram = async () => {
             if (!containerRef.current || !resolvedContent) {
                 if (containerRef.current) {
@@ -84,8 +86,14 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
             try {
                 // 先用 parse() 驗證語法，提供更精確的錯誤訊息
                 await mermaid.parse(resolvedContent);
+                if (cancelled || !containerRef.current) {
+                    return;
+                }
 
                 const { svg } = await mermaid.render(mermaidId, resolvedContent);
+                if (cancelled || !containerRef.current) {
+                    return;
+                }
                 // 安全性由 mermaid.initialize({ securityLevel: 'strict' }) 保證：
                 // Mermaid strict mode 內部使用 DOMPurify 消毒 SVG 輸出，
                 // 移除 script / event handler / javascript: URL 等 XSS 向量。
@@ -103,6 +111,9 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                     svgEl.style.height = 'auto';
                 }
             } catch (err) {
+                if (cancelled) {
+                    return;
+                }
                 console.error('Mermaid render error:', err);
                 if (containerRef.current) {
                     containerRef.current.innerHTML = '';
@@ -112,6 +123,10 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
         };
 
         renderDiagram();
+
+        return () => {
+            cancelled = true;
+        };
     }, [resolvedContent, theme.isDark, mermaidId, width, height]);
 
     return (
