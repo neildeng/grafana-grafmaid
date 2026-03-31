@@ -37,6 +37,33 @@ function resolveSeries(series: DataFrame[], selector?: string): DataFrame | unde
 }
 
 /**
+ * 解析 data block / placeholder 中的 series selector。
+ *
+ * 支援：
+ * - data                → undefined (series[0])
+ * - data.CPU_A          → "CPU_A"
+ * - data.cpu-prod       → "cpu-prod"
+ * - data["CPU Prod"]    → "CPU Prod"
+ */
+function parseSeriesSelector(selectorRef: string): string | undefined {
+    if (selectorRef === 'data') {
+        return undefined;
+    }
+
+    const dotMatch = selectorRef.match(/^data\.(.+)$/);
+    if (dotMatch) {
+        return dotMatch[1];
+    }
+
+    const bracketMatch = selectorRef.match(/^data\["([^"]+)"\]$/);
+    if (bracketMatch) {
+        return bracketMatch[1];
+    }
+
+    return undefined;
+}
+
+/**
  * 自動取得 DataFrame 中第一個非 Time 欄位 (值欄位)。
  * 用於簡寫語法 ${__data.CPU_A:display}，省略 .fields.X 時自動選擇。
  */
@@ -118,6 +145,7 @@ function getColorValue(field: Field, rowIndex: number): string {
 //   完整語法 (指定欄位)：
 //   ${__data.fields.Name}              — series[0], dot notation (group 2)
 //   ${__data.CPU_A.fields.Name}        — 依 refId/name 指定 series (group 1), dot (group 2)
+//   ${__data["CPU Prod"].fields.Name}  — 依 refId/name 指定 series, bracket notation (group 2)
 //   ${__data.fields["Name"]}           — bracket string notation (group 3)
 //   ${__data.fields[0]}                — bracket index notation (group 4)
 //   :display / :color                  — 欄位格式修飾符 (group 5)
@@ -133,9 +161,9 @@ function getColorValue(field: Field, rowIndex: number): string {
 //
 //   ${__index} / ${__rowCount}         — 內建變數 (group 8)
 //
-// (?!fields\b)(?!labels\b) negative lookahead 確保 series selector 不會誤匹配關鍵字
+// (?!fields\b)(?!labels\b) negative lookahead 確保 dot selector 不會誤匹配關鍵字
 const FIELD_PLACEHOLDER_PATTERN =
-    /\$\{(?:__data(?:\.(?!fields\b)(?!labels\b)([\w]+))?(?:\.fields(?:\.([^:}"[\]]+?)|(?:\["([^"]+)"\])|(?:\[(\d+)\]))(?::(display|color))?|\.labels\.([\w]+)|(?::(display|color)))?|(__index|__rowCount))\}/g;
+    /\$\{(?:__data(?:\.(?!fields\b)(?!labels\b)([\w-]+)|\["([^"]+)"\])?(?:\.fields(?:\.([^:}"[\]]+?)|(?:\["([^"]+)"\])|(?:\[(\d+)\]))(?::(display|color))?|\.labels\.([\w]+)|(?::(display|color)))?|(__index|__rowCount))\}/g;
 
 /**
  * 替換單一列的佔位符。
@@ -158,7 +186,8 @@ function replaceFieldPlaceholders(
         FIELD_PLACEHOLDER_PATTERN,
         (
             _match,
-            seriesSelector?: string,
+            seriesSelectorDot?: string,
+            seriesSelectorBracket?: string,
             dotName?: string,
             bracketName?: string,
             bracketIdx?: string,
@@ -167,6 +196,8 @@ function replaceFieldPlaceholders(
             shorthandModifier?: string,
             builtin?: string
         ) => {
+            const seriesSelector = seriesSelectorDot ?? seriesSelectorBracket;
+
             if (builtin === '__index') {
                 return String(rowIndex);
             }
@@ -285,12 +316,11 @@ export function expandDataBlocks(
     escapeValues: boolean,
     maxRows = 0
 ): string {
-    // Phase 1：展開 {{#each data}} / {{#each data.N}} / {{#each data.refId}} 區塊
-    const blockPattern = /\{\{#each\s+(data(?:\.[\w]+)?)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
+    // Phase 1：展開 {{#each data}} / {{#each data.refId}} / {{#each data["Series Name"]}} 區塊
+    const blockPattern = /\{\{#each\s+(data(?:\.(?:[\w-]+)|\["[^"]+"\])?)\s*\}\}([\s\S]*?)\{\{\/each\}\}/g;
 
     let result = content.replace(blockPattern, (_fullMatch, dataRef: string, template: string) => {
-        // 解析 series selector：data → undefined, data.X → "X"
-        const selector = dataRef === 'data' ? undefined : dataRef.split('.')[1];
+        const selector = parseSeriesSelector(dataRef);
         const frame = resolveSeries(series, selector);
 
         if (!frame || frame.length === 0) {
