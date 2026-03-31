@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.0.4](https://github.com/neildeng/grafana-grafmaid/tree/v1.0.4) (2026-03-31)
+
+[Full Changelog](https://github.com/neildeng/grafana-grafmaid/compare/v1.0.3...v1.0.4)
+
+- feat: 新增 {{\#each series}} 跨 series 迭代語法 [\#27](https://github.com/neildeng/grafana-grafmaid/pull/27) ([neildeng](https://github.com/neildeng))
+- fix: support richer series selectors [\#26](https://github.com/neildeng/grafana-grafmaid/pull/26) ([tan9](https://github.com/tan9))
+- fix: clear stale SVG when content is empty [\#24](https://github.com/neildeng/grafana-grafmaid/pull/24) ([tan9](https://github.com/tan9))
+
 ## [v1.0.3](https://github.com/neildeng/grafana-grafmaid/tree/v1.0.3) (2026-03-30)
 
 [Full Changelog](https://github.com/neildeng/grafana-grafmaid/compare/v1.0.2...v1.0.3)
