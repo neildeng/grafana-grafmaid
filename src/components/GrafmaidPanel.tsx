@@ -103,7 +103,6 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                     svgEl.style.height = 'auto';
                 }
             } catch (err) {
-                console.error('Mermaid render error:', err);
                 if (containerRef.current) {
                     containerRef.current.innerHTML = '';
                 }

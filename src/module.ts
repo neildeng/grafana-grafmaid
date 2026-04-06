@@ -34,7 +34,7 @@ export const plugin = new PanelPlugin<GrafmaidOptions>(GrafmaidPanel)
             path: 'content',
             name: 'Mermaid Content',
             description:
-                'Enter Mermaid diagram definition. Supports $variable substitution, {{#each var}}...{{value}}...{{/each}} multi-value expansion, {{#each data}}...${__data.fields.Name}...{{/each}} query result expansion, and {{#each series}}...${__data.labels.X}...{{/each}} cross-series iteration.',
+                'Enter a Mermaid diagram definition. Supports dashboard variable substitution and query result expansion. See the README for syntax details.',
             defaultValue: DEFAULT_CONTENT,
             settings: {
                 useTextarea: true,
