@@ -79,9 +79,23 @@ describe('GrafmaidPanel', () => {
             expect(mockedMermaid.parse).toHaveBeenCalledWith('graph TD\n    A --> B');
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.stringContaining('mermaid-'),
-                'graph TD\n    A --> B'
+                'graph TD\n    A --> B',
+                expect.any(HTMLDivElement)
             );
         });
+    });
+
+    it('應在面板容器內渲染，而非掛到 document.body (避免頁面捲軸切換造成所有面板閃爍)', async () => {
+        mockedMermaid.render.mockResolvedValue({ svg: '<svg></svg>', bindFunctions: jest.fn() });
+
+        const { container } = render(<GrafmaidPanel {...createDefaultProps()} />);
+
+        await waitFor(() => {
+            expect(mockedMermaid.render).toHaveBeenCalled();
+        });
+        const renderHost = mockedMermaid.render.mock.calls[0][2];
+        expect(renderHost).toBeInstanceOf(HTMLDivElement);
+        expect(container.contains(renderHost as Node)).toBe(true);
     });
 
     it('content 為空時不應呼叫 mermaid.render', async () => {
@@ -288,11 +302,13 @@ describe('GrafmaidPanel', () => {
         await waitFor(() => {
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.any(String),
-                expect.stringContaining('node_0["DB: 75"]')
+                expect.stringContaining('node_0["DB: 75"]'),
+                expect.anything()
             );
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.any(String),
-                expect.stringContaining('node_1["Cache: 90"]')
+                expect.stringContaining('node_1["Cache: 90"]'),
+                expect.anything()
             );
         });
     });
@@ -312,7 +328,8 @@ describe('GrafmaidPanel', () => {
             // data block 被移除，僅渲染靜態部分
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.any(String),
-                expect.stringContaining('A --> B')
+                expect.stringContaining('A --> B'),
+                expect.anything()
             );
         });
     });
@@ -337,11 +354,13 @@ describe('GrafmaidPanel', () => {
         await waitFor(() => {
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.any(String),
-                expect.stringContaining('Service --> DB')
+                expect.stringContaining('Service --> DB'),
+                expect.anything()
             );
             expect(mockedMermaid.render).toHaveBeenCalledWith(
                 expect.any(String),
-                expect.stringContaining('Service --> Cache')
+                expect.stringContaining('Service --> Cache'),
+                expect.anything()
             );
         });
     });

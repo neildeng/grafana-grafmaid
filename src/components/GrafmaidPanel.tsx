@@ -85,7 +85,9 @@ export const GrafmaidPanel: React.FC<Props> = ({ options, data, width, height, f
                 // 先用 parse() 驗證語法，提供更精確的錯誤訊息
                 await mermaid.parse(resolvedContent);
 
-                const { svg } = await mermaid.render(mermaidId, resolvedContent);
+                // 傳入面板容器作為暫存渲染節點的掛載點：未指定時 Mermaid 會掛到 document.body，
+                // 撐高頁面並使頁面捲軸出現/消失，所有面板寬度隨之改變，本 effect 又依 width 重新渲染，形成閃爍迴圈
+                const { svg } = await mermaid.render(mermaidId, resolvedContent, containerRef.current);
                 // 安全性由 mermaid.initialize({ securityLevel: 'strict' }) 保證：
                 // Mermaid strict mode 內部使用 DOMPurify 消毒 SVG 輸出，
                 // 移除 script / event handler / javascript: URL 等 XSS 向量。
